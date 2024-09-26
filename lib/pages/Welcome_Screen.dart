@@ -3,95 +3,102 @@ import 'package:flutter/material.dart';
 class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
-        body: // Figma Flutter Generator Welcome_pageWidget - FRAME
+      body: Container(
+        width: screenWidth,
+        height: screenHeight,
+        child: Column(
+          children: [
+            // Área azul (texto e botão)
             Container(
-                width: 360,
-                height: 640,
-                decoration: BoxDecoration(
-                  color: Color.fromRGBO(183, 244, 249, 1),
-                ),
-                child: Stack(children: <Widget>[
+              width: screenWidth,
+              height: screenHeight * 0.44, // Área azul ocupa 44% da altura
+              color: Color.fromRGBO(183, 244, 249, 1),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'ReciclAqui!',
+                    style: TextStyle(
+                      color: Color.fromRGBO(83, 128, 1, 1),
+                      fontFamily: 'Montserrat',
+                      fontSize: 32,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    'Ainda não tem uma conta? Sign up',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'Roboto',
+                      fontSize: 14,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color.fromRGBO(83, 128, 1, 1),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: screenWidth * 0.3, vertical: 15),
+                    ),
+                    onPressed: () {
+                      // Ação do botão
+                    },
+                    child: Text(
+                      'Fazer Login',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'Roboto',
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // Imagem de boas-vindas
+            Expanded(
+              child: Stack(
+                children: [
                   Positioned(
-                      top: 279,
-                      left: 0,
-                      child: Container(
-                          width: 360,
-                          height: 361,
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: AssetImage(
-                                    'assets/images/welcome-people.png'),
-                                fit: BoxFit.fitWidth),
-                          ))),
+                    top: 0,
+                    left: 0,
+                    child: Container(
+                      width: screenWidth,
+                      height: screenHeight * 0.46, // Ajusta a altura da imagem
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/welcome-people.jpg'),
+                          fit: BoxFit.fitWidth,
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Fundo verde abaixo da imagem
                   Positioned(
-                      top: 143,
-                      left: 36,
-                      child: Container(
-                          width: 287,
-                          height: 98.70136260986328,
-                          child: Stack(children: <Widget>[
-                            Positioned(
-                                top: 50,
-                                left: 0,
-                                child: Container(
-                                    width: 287,
-                                    height: 48.70136260986328,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(15),
-                                        topRight: Radius.circular(15),
-                                        bottomLeft: Radius.circular(15),
-                                        bottomRight: Radius.circular(15),
-                                      ),
-                                      color: Color.fromRGBO(83, 128, 1, 1),
-                                    ))),
-                            Positioned(
-                                top: 65,
-                                left: 100,
-                                child: Text(
-                                  'Fazer Login',
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                      color: Color.fromRGBO(255, 255, 255, 1),
-                                      fontFamily: 'Roboto',
-                                      fontSize: 16,
-                                      letterSpacing:
-                                          0 /*percentages not used in flutter. defaulting to zero*/,
-                                      fontWeight: FontWeight.normal,
-                                      height: 1),
-                                )),
-                            Positioned(
-                                top: 0,
-                                left: 33,
-                                child: Text(
-                                  'Ainda não tem uma conta? Sign up',
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontFamily: 'Roboto',
-                                      fontSize: 14,
-                                      letterSpacing:
-                                          0 /*percentages not used in flutter. defaulting to zero*/,
-                                      fontWeight: FontWeight.normal,
-                                      height: 2.142857142857143),
-                                )),
-                          ]))),
-                  Positioned(
-                      top: 87,
-                      left: 84,
-                      child: Text(
-                        'ReciclAqui!',
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                            color: Color.fromRGBO(83, 128, 1, 1),
-                            fontFamily: 'Montserrat',
-                            fontSize: 32,
-                            letterSpacing:
-                                0 /*percentages not used in flutter. defaulting to zero*/,
-                            fontWeight: FontWeight.normal,
-                            height: 1),
-                      )),
-                ])));
+                    bottom: 0,
+                    left: 0,
+                    child: Container(
+                      width: screenWidth,
+                      height: screenHeight * 0.1, // altura do fundo verde
+                      color: Color.fromRGBO(83, 128, 1, 1), // Fundo verde
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
+

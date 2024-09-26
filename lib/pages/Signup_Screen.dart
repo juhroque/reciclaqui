@@ -59,7 +59,7 @@ class SignupScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildSocialButton('assets/images/google.png'), // Ícone do Google
+                _buildSocialButton('assets/images/search.png'), // Ícone do Google
                 SizedBox(width: 10),
                 _buildSocialButton('assets/images/apple.png'), // Ícone da Apple
                 SizedBox(width: 10),

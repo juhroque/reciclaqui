@@ -64,7 +64,7 @@ class LoginScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildSocialButton('assets/images/google.png'),
+                _buildSocialButton('assets/images/search.png'),
                 SizedBox(width: 10),
                 _buildSocialButton('assets/images/apple.png'),
                 SizedBox(width: 10),
