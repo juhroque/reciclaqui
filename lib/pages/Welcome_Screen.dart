@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:reciclaqui/pages/Login_Screen.dart';
+import 'package:reciclaqui/pages/Reason_Screen.dart';
 
 class WelcomeScreen extends StatelessWidget {
   @override
@@ -50,7 +52,12 @@ class WelcomeScreen extends StatelessWidget {
                           horizontal: screenWidth * 0.3, vertical: 15),
                     ),
                     onPressed: () {
-                      // Ação do botão
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => LoginScreen(),
+                          ),
+                      );
                     },
                     child: Text(
                       'Fazer Login',

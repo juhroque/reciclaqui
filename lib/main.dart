@@ -3,6 +3,7 @@ import 'package:reciclaqui/pages/Home_Page.dart';
 import 'package:reciclaqui/pages/Login_Screen.dart';
 import 'package:reciclaqui/pages/Signup_Screen.dart';
 import 'package:reciclaqui/pages/Welcome_Screen.dart';
+import 'package:reciclaqui/pages/Reason_Screen.dart';
 
 void main() {
   runApp(const MyApp());
