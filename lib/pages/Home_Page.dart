@@ -1,227 +1,182 @@
 import 'package:flutter/material.dart';
+import 'Reason_Screen.dart'; // navegacao
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        InfosPerfil(),
-      ],
+    final String name = ModalRoute.of(context)!.settings.arguments as String; // Capturando o nome do sign up
+
+    return Scaffold(
+      body: Stack(
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              InfosPerfil(name: name), // Passando o nome para InfosPerfil
+              SizedBox(height: 40), // Espaçamento entre o perfil e os cards
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildCard('Identificar Objeto', Icons.camera_alt, 130), //consegui deixar os cards do tamanho certo mudando indivualmente
+                    _buildCard('Registrar Descarte', Icons.delete, 130),
+                    _buildCard('Estabelecimentos Parceiros', Icons.store, 130),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Positioned(
+            top: 30,
+            left: 16,
+            child: IconButton(
+              icon: Icon(Icons.help, color: Colors.black),
+              onPressed: () {
+                // navegacao reason screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ReasonScreen()),
+                );
+              },
+            ),
+          ),
+          Positioned(
+            top: 30,
+            right: 16,
+            child: IconButton(
+              icon: Icon(Icons.search, color: Colors.black),
+              onPressed: () {
+                // Ação ao pressionar o ícone de busca
+                print('Busca clicada');
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCard(String text, IconData icon, double height) {
+    return SizedBox(
+      width: 300,
+      height: height,
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 50,
+                color: Colors.grey[700],
+              ),
+              SizedBox(height: 10),
+              Text(
+                text,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
 
 class InfosPerfil extends StatelessWidget {
-  const InfosPerfil({
-    super.key,
-  });
+  final String name; // variável para armazenar o nome
+
+  const InfosPerfil({super.key, required this.name}); // Aceitando o nome como parâmetro
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        width: 360,
-        height: 256,
-        child: Stack(children: <Widget>[
+      width: double.infinity,
+      height: 256,
+      child: Stack(
+        children: <Widget>[
           Positioned(
-              top: 0,
-              left: 0,
-              child: Container(
-                  width: 360,
-                  height: 256,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(0),
-                      topRight: Radius.circular(0),
-                      bottomLeft: Radius.circular(15),
-                      bottomRight: Radius.circular(15),
-                    ),
-                    color: Color.fromRGBO(83, 128, 1, 1),
-                  ))),
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: 256,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(15),
+                  bottomRight: Radius.circular(15),
+                ),
+                color: Color.fromRGBO(83, 128, 1, 1),
+              ),
+            ),
+          ),
           Positioned(
-              top: 196,
-              left: 58,
-              child: Container(
-                  width: 249,
-                  height: 37,
-                  child: Stack(children: <Widget>[
-                    Positioned(
-                        top: 0,
-                        left: 0,
-                        child: Container(
-                            width: 46,
-                            height: 36,
-                            child: Stack(children: <Widget>[
-                              Positioned(
-                                  top: 0,
-                                  left: 4,
-                                  child: Text(
-                                    '1989',
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(
-                                        color: Color.fromRGBO(255, 255, 255, 1),
-                                        decoration: TextDecoration.none,
-                                        fontFamily: 'Inter',
-                                        fontSize: 16,
-                                        letterSpacing:
-                                            0 /*percentages not used in flutter. defaulting to zero*/,
-                                        fontWeight: FontWeight.normal,
-                                        height: 1),
-                                  )),
-                              Positioned(
-                                  top: 19,
-                                  left: 0,
-                                  child: Text(
-                                    'Pontos',
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(
-                                        color: Color.fromRGBO(255, 255, 255, 1),
-                                        fontFamily: 'Inter',
-                                        decoration: TextDecoration.none,
-                                        fontSize: 14,
-                                        letterSpacing:
-                                            0 /*percentages not used in flutter. defaulting to zero*/,
-                                        fontWeight: FontWeight.normal,
-                                        height: 1),
-                                  )),
-                            ]))),
-                    Positioned(
-                        top: 1,
-                        left: 197,
-                        child: Container(
-                            width: 52,
-                            height: 36,
-                            child: Stack(children: <Widget>[
-                              Positioned(
-                                  top: 0,
-                                  left: 15,
-                                  child: Text(
-                                    '13',
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(
-                                        color: Color.fromRGBO(255, 255, 255, 1),
-                                        fontFamily: 'Inter',
-                                        decoration: TextDecoration.none,
-                                        fontSize: 16,
-                                        letterSpacing:
-                                            0 /*percentages not used in flutter. defaulting to zero*/,
-                                        fontWeight: FontWeight.normal,
-                                        height: 1),
-                                  )),
-                              Positioned(
-                                  top: 19,
-                                  left: 0,
-                                  child: Text(
-                                    'Ranking',
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(
-                                        color: Color.fromRGBO(255, 255, 255, 1),
-                                        fontFamily: 'Inter',
-                                        fontSize: 14,
-                                        decoration: TextDecoration.none,
-                                        letterSpacing:
-                                            0 /*percentages not used in flutter. defaulting to zero*/,
-                                        fontWeight: FontWeight.normal,
-                                        height: 1),
-                                  )),
-                            ]))),
-                    Positioned(
-                        top: 0,
-                        left: 82,
-                        child: Container(
-                            width: 79,
-                            height: 36,
-                            child: Stack(children: <Widget>[
-                              Positioned(
-                                  top: 0,
-                                  left: 27,
-                                  child: Text(
-                                    '101',
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(
-                                        color: Color.fromRGBO(255, 255, 255, 1),
-                                        fontFamily: 'Inter',
-                                        fontSize: 16,
-                                        decoration: TextDecoration.none,
-                                        letterSpacing:
-                                            0 /*percentages not used in flutter. defaulting to zero*/,
-                                        fontWeight: FontWeight.normal,
-                                        height: 1),
-                                  )),
-                              Positioned(
-                                  top: 19,
-                                  left: 0,
-                                  child: Text(
-                                    'Reciclagens',
-                                    textAlign: TextAlign.left,
-                                    style: TextStyle(
-                                        color: Color.fromRGBO(255, 255, 255, 1),
-                                        fontFamily: 'Inter',
-                                        decoration: TextDecoration.none,
-                                        fontSize: 14,
-                                        letterSpacing:
-                                            0 /*percentages not used in flutter. defaulting to zero*/,
-                                        fontWeight: FontWeight.normal,
-                                        height: 1),
-                                  )),
-                            ]))),
-                  ]))),
-          Positioned(
-              top: 154,
-              left: 122,
-              child: Text(
-                'Vitória Araújo',
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                    color: Color.fromRGBO(255, 255, 255, 1),
-                    fontFamily: 'Inter',
-                    decoration: TextDecoration.none,
+            top: 47,
+            left: 0,
+            right: 0,
+            child: Column(
+              children: [
+                CircleAvatar(
+                  radius: 50,
+                  backgroundImage: AssetImage('assets/images/Icon.png'),
+                ),
+                SizedBox(height: 10),
+                Text(
+                  name, // Exibindo o nome do usuário
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
                     fontSize: 18,
-                    letterSpacing:
-                        0 /*percentages not used in flutter. defaulting to zero*/,
-                    fontWeight: FontWeight.normal,
-                    height: 1),
-              )),
-          Positioned(
-              top: 47,
-              left: 126,
-              child: Container(
-                  width: 108,
-                  height: 103,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(600),
-                      topRight: Radius.circular(600),
-                      bottomLeft: Radius.circular(600),
-                      bottomRight: Radius.circular(600),
-                    ),
-                    image: DecorationImage(
-                        image: AssetImage('assets/images/Icon.png'),
-                        fit: BoxFit.fitWidth),
-                  ))),
-          Positioned(
-              top: 37,
-              left: 324,
-              child: Container(
-                  width: 21,
-                  height: 21,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage('assets/images/Search.png'),
-                        fit: BoxFit.fitWidth),
-                  ))),
-          Positioned(
-              top: 35,
-              left: 11,
-              child: Container(
-                  width: 25,
-                  height: 25,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage('assets/images/Help.png'),
-                        fit: BoxFit.fitWidth),
-                  ))),
-        ]));
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildProfileStat('1989', 'Pontos'),
+                    _buildProfileStat('101', 'Reciclagens'),
+                    _buildProfileStat('13', 'Ranking'),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProfileStat(String value, String label) {
+    return Column(
+      children: [
+        Text(
+          value,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 14,
+          ),
+        ),
+      ],
+    );
   }
 }

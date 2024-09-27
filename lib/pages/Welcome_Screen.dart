@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:reciclaqui/pages/Login_Screen.dart';
-import 'package:reciclaqui/pages/Reason_Screen.dart';
+import 'package:reciclaqui/pages/Signup_Screen.dart';
+import 'package:flutter/gestures.dart';
+
 
 class WelcomeScreen extends StatelessWidget {
   @override
@@ -32,13 +34,32 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 20),
-                  Text(
-                    'Ainda não tem uma conta? Sign up',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'Roboto',
-                      fontSize: 14,
-                      fontWeight: FontWeight.normal,
+                  RichText(
+                    text: TextSpan(
+                      text: 'Ainda não tem uma conta? ',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'Roboto',
+                        fontSize: 14,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: 'Sign up',
+                          style: TextStyle(
+                            color: Colors.white,
+                            decoration: TextDecoration.underline, // Apenas "Sign up" sublinhado
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SignupScreen(),
+                                ),
+                              );
+                            },
+                        ),
+                      ],
                     ),
                   ),
                   SizedBox(height: 20),
@@ -53,10 +74,10 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                     onPressed: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => LoginScreen(),
-                          ),
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => LoginScreen(),
+                        ),
                       );
                     },
                     child: Text(

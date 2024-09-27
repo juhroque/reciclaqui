@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class SignupScreen extends StatelessWidget {
+  final TextEditingController nameController = TextEditingController(); // Controlador para o nome
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,6 +31,7 @@ class SignupScreen extends StatelessWidget {
             ),
             SizedBox(height: 30),
             TextField(
+              controller: nameController, // Usando o controlador
               decoration: InputDecoration(labelText: 'Nome'),
             ),
             TextField(
@@ -43,7 +46,10 @@ class SignupScreen extends StatelessWidget {
             ),
             SizedBox(height: 30),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                // Navegar para HomePage passando o nome
+                Navigator.pushNamed(context, '/home', arguments: nameController.text);
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green[700],
                 padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
@@ -59,11 +65,11 @@ class SignupScreen extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildSocialButton('assets/images/search.png'), // Ícone do Google
+                _buildSocialButton('assets/images/search.png'),
                 SizedBox(width: 10),
-                _buildSocialButton('assets/images/apple.png'), // Ícone da Apple
+                _buildSocialButton('assets/images/apple.png'),
                 SizedBox(width: 10),
-                _buildSocialButton('assets/images/facebook.png'), // Ícone do Facebook
+                _buildSocialButton('assets/images/facebook.png'),
               ],
             ),
             SizedBox(height: 20),
@@ -87,8 +93,8 @@ class SignupScreen extends StatelessWidget {
     return InkWell(
       onTap: () {},
       child: Container(
-        width: 50, // Largura fixa para os botões ficarem uniformes
-        height: 50, // Altura fixa para os botões ficarem quadrados
+        width: 50,
+        height: 50,
         padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey),
@@ -96,10 +102,9 @@ class SignupScreen extends StatelessWidget {
         ),
         child: Image.asset(
           imagePath,
-          fit: BoxFit.contain, // Mantém a imagem dentro do botão
+          fit: BoxFit.contain,
         ),
       ),
     );
   }
 }
-

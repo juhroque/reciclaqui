@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class ReasonScreen extends StatelessWidget {
   @override
-    Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
@@ -21,37 +21,37 @@ class ReasonScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly, // Alinhamento horizontal
-                      crossAxisAlignment: CrossAxisAlignment.center, // Alinhamento vertical
-                      children: [
-                        IconButton(
-                          icon: Icon(Icons.arrow_back, color: Colors.green),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween, // Alinhamento horizontal
+                    crossAxisAlignment: CrossAxisAlignment.center, // Alinhamento vertical
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.arrow_back, color: Colors.green, size: 30), // Aumenta o tamanho da setinha
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                      const Text(
+                        'Por que Reciclar?',
+                        style: TextStyle(
+                          color: Color.fromRGBO(83, 128, 1, 1),
+                          fontFamily: 'Montserrat',
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold, // Deixa o texto mais forte
                         ),
-
-                        const SizedBox(width: 10), // Espaço entre o botão/titulo e o texto
-                        
-                        const Text(
-                          'Por que Reciclar?',
-                          style: TextStyle(
-                            color: Color.fromRGBO(83, 128, 1, 1),
-                            fontFamily: 'Montserrat',
-                            fontSize: 28,
-                            fontWeight: FontWeight.normal,
-                          ),
-                        ),
-                      ],
+                      ),
+                      // Um espaço vazio para centralizar o título
+                      const SizedBox(width: 48), // Espaço para compensar o ícone da setinha
+                    ],
                   ),
-
+                  const SizedBox(height: 20), // Espaço entre o título e o texto
                   Container(
-                    padding: EdgeInsets.all(20.0),
+                    padding: EdgeInsets.symmetric(horizontal: 20.0),
                     child: const Text(
-                      ' It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
+                      'It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. '
+                      'It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
                       textAlign: TextAlign.justify,
                       style: TextStyle(
-                        color:Color.fromRGBO(83, 128, 1, 1),  
+                        color: Color.fromRGBO(83, 128, 1, 1),
                         fontFamily: 'Montserrat',
                         fontSize: 15,
                         fontWeight: FontWeight.normal,
@@ -61,7 +61,7 @@ class ReasonScreen extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             // Imagem de fundo
             Expanded(
               child: Stack(
