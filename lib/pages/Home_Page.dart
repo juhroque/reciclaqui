@@ -21,14 +21,10 @@ class HomePage extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildCard(
-                        'Identificar Objeto',
-                        Icons.camera_alt,
-                        130,
-                        '/home',
+                    _buildCard('Identificar Objeto', Icons.camera_alt, 130, '',
                         context), //consegui deixar os cards do tamanho certo mudando indivualmente
-                    _buildCard('Registrar Descarte', Icons.delete, 130, '/home',
-                        context),
+                    _buildCard(
+                        'Registrar Descarte', Icons.delete, 130, '', context),
                     _buildCard('Estabelecimentos Parceiros', Icons.store, 130,
                         '/partners', context),
                   ],
@@ -70,7 +66,8 @@ class HomePage extends StatelessWidget {
       String text, IconData icon, double height, String rota, context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, rota);
+        // os que ainda nao tao com a rota configurada tao '' no parametro
+        if (rota != '') Navigator.pushNamed(context, rota);
       },
       child: SizedBox(
         width: 300,
