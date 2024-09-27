@@ -11,7 +11,7 @@ class WelcomeScreen extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      body: Container(
+      body: SizedBox(
         width: screenWidth,
         height: screenHeight,
         child: Column(
@@ -20,11 +20,11 @@ class WelcomeScreen extends StatelessWidget {
             Container(
               width: screenWidth,
               height: screenHeight * 0.44, // Área azul ocupa 44% da altura
-              color: Color.fromRGBO(183, 244, 249, 1),
+              color: const Color.fromRGBO(183, 244, 249, 1),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     'ReciclAqui!',
                     style: TextStyle(
                       color: Color.fromRGBO(83, 128, 1, 1),
@@ -33,11 +33,11 @@ class WelcomeScreen extends StatelessWidget {
                       fontWeight: FontWeight.normal,
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   RichText(
                     text: TextSpan(
                       text: 'Ainda não tem uma conta? ',
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontFamily: 'Roboto',
                         fontSize: 14,
@@ -45,7 +45,7 @@ class WelcomeScreen extends StatelessWidget {
                       children: [
                         TextSpan(
                           text: 'Sign up',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white,
                             decoration: TextDecoration.underline, // Apenas "Sign up" sublinhado
                           ),
@@ -62,10 +62,10 @@ class WelcomeScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromRGBO(83, 128, 1, 1),
+                      backgroundColor: const Color.fromRGBO(83, 128, 1, 1),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
@@ -80,7 +80,7 @@ class WelcomeScreen extends StatelessWidget {
                         ),
                       );
                     },
-                    child: Text(
+                    child: const Text(
                       'Fazer Login',
                       style: TextStyle(
                         color: Colors.white,
@@ -102,7 +102,7 @@ class WelcomeScreen extends StatelessWidget {
                     child: Container(
                       width: screenWidth,
                       height: screenHeight * 0.46, // Ajusta a altura da imagem
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         image: DecorationImage(
                           image: AssetImage('assets/images/welcome-people.jpg'),
                           fit: BoxFit.fitWidth,
@@ -117,7 +117,7 @@ class WelcomeScreen extends StatelessWidget {
                     child: Container(
                       width: screenWidth,
                       height: screenHeight * 0.1, // altura do fundo verde
-                      color: Color.fromRGBO(83, 128, 1, 1), // Fundo verde
+                      color: const Color.fromRGBO(83, 128, 1, 1), // Fundo verde
                     ),
                   ),
                 ],

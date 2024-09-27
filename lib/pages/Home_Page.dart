@@ -16,7 +16,7 @@ class HomePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               InfosPerfil(name: name), // Passando o nome para InfosPerfil
-              SizedBox(height: 40), // Espaçamento entre o perfil e os cards
+              const SizedBox(height: 40), // Espaçamento entre o perfil e os cards
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -36,7 +36,7 @@ class HomePage extends StatelessWidget {
             top: 30,
             left: 16,
             child: IconButton(
-              icon: Icon(Icons.help, color: Colors.black),
+              icon: const Icon(Icons.help, color: Colors.black),
               onPressed: () {
                 // navegacao reason screen
                 Navigator.push(
@@ -50,7 +50,7 @@ class HomePage extends StatelessWidget {
             top: 30,
             right: 16,
             child: IconButton(
-              icon: Icon(Icons.search, color: Colors.black),
+              icon: const Icon(Icons.search, color: Colors.black),
               onPressed: () {
                 // Ação ao pressionar o ícone de busca
                 print('Busca clicada');
@@ -87,10 +87,10 @@ class HomePage extends StatelessWidget {
                   size: 50,
                   color: Colors.grey[700],
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Text(
                   text,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -113,7 +113,7 @@ class InfosPerfil extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
       height: 256,
       child: Stack(
@@ -124,7 +124,7 @@ class InfosPerfil extends StatelessWidget {
             right: 0,
             child: Container(
               height: 256,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(15),
                   bottomRight: Radius.circular(15),
@@ -139,21 +139,21 @@ class InfosPerfil extends StatelessWidget {
             right: 0,
             child: Column(
               children: [
-                CircleAvatar(
+                const CircleAvatar(
                   radius: 50,
                   backgroundImage: AssetImage('assets/images/Icon.png'),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Text(
                   name, // Exibindo o nome do usuário
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -175,7 +175,7 @@ class InfosPerfil extends StatelessWidget {
       children: [
         Text(
           value,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -183,7 +183,7 @@ class InfosPerfil extends StatelessWidget {
         ),
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 14,
           ),

@@ -5,8 +5,15 @@ import 'package:reciclaqui/pages/Signup_Screen.dart';
 import 'package:reciclaqui/pages/Welcome_Screen.dart';
 import 'package:reciclaqui/pages/Reason_Screen.dart';
 import 'package:reciclaqui/pages/Partners_Screen.dart';
+import 'package:firebase_core/firebase_core.dart' as firebase_core;
+import 'firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding
+      .ensureInitialized(); // Necessário para o uso de 'async' no main
+  await firebase_core.Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 

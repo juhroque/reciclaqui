@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignupScreen extends StatelessWidget {
-  final TextEditingController nameController = TextEditingController(); // Controlador para o nome
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -29,55 +32,59 @@ class SignupScreen extends StatelessWidget {
                 color: Colors.green[700],
               ),
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             TextField(
               controller: nameController, // Usando o controlador
-              decoration: InputDecoration(labelText: 'Nome'),
+              decoration: const InputDecoration(labelText: 'Nome'),
             ),
             TextField(
-              decoration: InputDecoration(labelText: 'Email'),
+              controller: emailController, // Usando o controlador
+              decoration: const InputDecoration(labelText: 'Email'),
             ),
             TextField(
-              decoration: InputDecoration(
+              controller: passwordController, // Usando o controlador
+              decoration: const InputDecoration(
                 labelText: 'Senha',
                 suffixIcon: Icon(Icons.visibility),
               ),
               obscureText: true,
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
+                await _createAccount();
                 // Navegar para HomePage passando o nome
-                Navigator.pushNamed(context, '/home', arguments: nameController.text);
+                //Navigator.pushNamed(context, '/home',
+                //  arguments: nameController.text);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green[700],
-                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: Text('Criar Conta', style: TextStyle(fontSize: 18)),
+              child: const Text('Criar Conta', style: TextStyle(fontSize: 18)),
             ),
-            SizedBox(height: 20),
-            Text('ou continue com'),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
+            const Text('ou continue com'),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _buildSocialButton('assets/images/search.png'),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 _buildSocialButton('assets/images/apple.png'),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 _buildSocialButton('assets/images/facebook.png'),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             GestureDetector(
               onTap: () {
                 Navigator.pushNamed(context, '/login');
               },
-              child: Text(
+              child: const Text(
                 'Já tem uma conta? Sign in',
                 style: TextStyle(color: Colors.blue),
               ),
@@ -95,7 +102,7 @@ class SignupScreen extends StatelessWidget {
       child: Container(
         width: 50,
         height: 50,
-        padding: EdgeInsets.all(8),
+        padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey),
           borderRadius: BorderRadius.circular(8),
@@ -106,5 +113,36 @@ class SignupScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _createAccount() async {
+    try {
+      // Criação de usuário no Firebase
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+
+      User? user = userCredential.user;
+      if (user != null) {
+        // Usuário criado com sucesso
+        print("Novo usuário criado: ${user.uid}");
+
+        // Atualizar o nome do usuário
+        await user.updateDisplayName(nameController.text);
+        await user.reload();
+        user = FirebaseAuth.instance.currentUser;
+        print("Nome do usuário atualizado: ${user?.displayName}");
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print('A senha fornecida é muito fraca.');
+      } else if (e.code == 'email-already-in-use') {
+        print('A conta já existe para esse e-mail.');
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 }

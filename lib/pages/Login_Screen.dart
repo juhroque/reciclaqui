@@ -1,16 +1,18 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final TextEditingController nameController = TextEditingController();
+    final TextEditingController emailController = TextEditingController();
+    final TextEditingController passwordController = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.green),
+          icon: const Icon(Icons.arrow_back, color: Colors.green),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -29,52 +31,55 @@ class LoginScreen extends StatelessWidget {
                 color: Colors.green[700],
               ),
             ),
-            SizedBox(height: 10),
-            Text('Que bom te ver de novo!', style: TextStyle(fontSize: 16)),
-            SizedBox(height: 20),
+            const SizedBox(height: 10),
+            const Text('Que bom te ver de novo!',
+                style: TextStyle(fontSize: 16)),
+            const SizedBox(height: 20),
             TextField(
-              controller: nameController,
-              decoration: InputDecoration(labelText: 'Email'),
+              controller: emailController,
+              decoration: const InputDecoration(labelText: 'Email'),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             TextField(
-              decoration: InputDecoration(
+              controller: passwordController,
+              decoration: const InputDecoration(
                 labelText: 'Senha',
                 suffixIcon: Icon(Icons.visibility),
               ),
               obscureText: true,
             ),
-            SizedBox(height: 10),
-            Align(
+            const SizedBox(height: 10),
+            const Align(
               alignment: Alignment.centerRight,
               child: Text('Esqueci minha senha',
                   style: TextStyle(color: Colors.blue)),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/home',
-                    arguments: nameController.text);
+              onPressed: () async {
+                await _login(context, emailController.text.trim(),
+                    passwordController.text.trim());
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green[700],
-                padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 100, vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: Text('Fazer Login', style: TextStyle(fontSize: 18)),
+              child: const Text('Fazer Login', style: TextStyle(fontSize: 18)),
             ),
-            SizedBox(height: 20),
-            Text('ou entre com', style: TextStyle(fontSize: 16)),
-            SizedBox(height: 10),
+            const SizedBox(height: 20),
+            const Text('ou entre com', style: TextStyle(fontSize: 16)),
+            const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _buildSocialButton('assets/images/search.png'),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 _buildSocialButton('assets/images/apple.png'),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 _buildSocialButton('assets/images/facebook.png'),
               ],
             ),
@@ -91,7 +96,7 @@ class LoginScreen extends StatelessWidget {
       child: Container(
         width: 50, // Largura fixa para os botões ficarem uniformes
         height: 50, // Altura fixa para os botões ficarem quadrados
-        padding: EdgeInsets.all(8),
+        padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey),
           borderRadius: BorderRadius.circular(8),
@@ -100,6 +105,49 @@ class LoginScreen extends StatelessWidget {
           imagePath,
           fit: BoxFit.contain, // Mantém a imagem dentro do botão
         ),
+      ),
+    );
+  }
+
+  Future<void> _login(BuildContext context, email, password) async {
+    if (email.isEmpty || password.isEmpty) {
+      _showErrorDialog(context, "Por favor, preencha todos os campos.");
+      return;
+    }
+    print(email);
+    print(password);
+
+    try {
+      final UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+      print(userCredential);
+      print("teste");
+
+      // Login bem-sucedido, redireciona para a tela inicial
+      Navigator.pushNamed(context, '/home',
+          arguments: userCredential.user?.email);
+    } on FirebaseAuthException catch (e) {
+      _showErrorDialog(context, e.message ?? 'Ocorreu um erro. Tente novamente.');
+    } catch (e) {
+      _showErrorDialog(context, 'Ocorreu um erro. Tente novamente mais tarde.');
+    }
+  }
+
+  // Função para exibir diálogos de erro
+  void _showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Erro'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+            child: const Text('Ok'),
+          ),
+        ],
       ),
     );
   }

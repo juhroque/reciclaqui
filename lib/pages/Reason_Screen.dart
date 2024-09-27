@@ -7,7 +7,7 @@ class ReasonScreen extends StatelessWidget {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      body: Container(
+      body: SizedBox(
         width: screenWidth,
         height: screenHeight,
         child: Column(
@@ -16,7 +16,7 @@ class ReasonScreen extends StatelessWidget {
             Container(
               width: screenWidth,
               height: screenHeight * 0.44, // Área azul ocupa 44% da altura
-              color: Color.fromRGBO(183, 244, 249, 1),
+              color: const Color.fromRGBO(183, 244, 249, 1),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -25,7 +25,7 @@ class ReasonScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center, // Alinhamento vertical
                     children: [
                       IconButton(
-                        icon: Icon(Icons.arrow_back, color: Colors.green, size: 30), // Aumenta o tamanho da setinha
+                        icon: const Icon(Icons.arrow_back, color: Colors.green, size: 30), // Aumenta o tamanho da setinha
                         onPressed: () {
                           Navigator.pop(context);
                         },
@@ -45,7 +45,7 @@ class ReasonScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20), // Espaço entre o título e o texto
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: const Text(
                       'It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. '
                       'It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
@@ -87,7 +87,7 @@ class ReasonScreen extends StatelessWidget {
                     child: Container(
                       width: screenWidth,
                       height: screenHeight * 0.1, // altura do fundo verde
-                      color: Color.fromRGBO(83, 128, 1, 1), // Fundo verde
+                      color: const Color.fromRGBO(83, 128, 1, 1), // Fundo verde
                     ),
                   ),
                 ],
