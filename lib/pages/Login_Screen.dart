@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final TextEditingController nameController = TextEditingController();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -31,6 +33,7 @@ class LoginScreen extends StatelessWidget {
             Text('Que bom te ver de novo!', style: TextStyle(fontSize: 16)),
             SizedBox(height: 20),
             TextField(
+              controller: nameController,
               decoration: InputDecoration(labelText: 'Email'),
             ),
             SizedBox(height: 10),
@@ -44,11 +47,15 @@ class LoginScreen extends StatelessWidget {
             SizedBox(height: 10),
             Align(
               alignment: Alignment.centerRight,
-              child: Text('Esqueci minha senha', style: TextStyle(color: Colors.blue)),
+              child: Text('Esqueci minha senha',
+                  style: TextStyle(color: Colors.blue)),
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, '/home',
+                    arguments: nameController.text);
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green[700],
                 padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
@@ -97,4 +104,3 @@ class LoginScreen extends StatelessWidget {
     );
   }
 }
-

@@ -4,6 +4,7 @@ import 'package:reciclaqui/pages/Login_Screen.dart';
 import 'package:reciclaqui/pages/Signup_Screen.dart';
 import 'package:reciclaqui/pages/Welcome_Screen.dart';
 import 'package:reciclaqui/pages/Reason_Screen.dart';
+import 'package:reciclaqui/pages/Partners_Screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,10 +22,10 @@ class MyApp extends StatelessWidget {
         '/': (context) => WelcomeScreen(),
         '/login': (context) => LoginScreen(),
         '/signup': (context) => SignupScreen(),
-        '/home': (context) => HomePage(),
+        '/home': (context) => const HomePage(),
         '/reason': (context) => ReasonScreen(),
+        '/partners': (context) => PartnersScreen(),
       },
     );
   }
 }
-

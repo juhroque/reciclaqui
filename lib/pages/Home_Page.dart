@@ -6,7 +6,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String name = ModalRoute.of(context)!.settings.arguments as String; // Capturando o nome do sign up
+    final String name = ModalRoute.of(context)!.settings.arguments
+        as String; // Capturando o nome do sign up
 
     return Scaffold(
       body: Stack(
@@ -20,9 +21,16 @@ class HomePage extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildCard('Identificar Objeto', Icons.camera_alt, 130), //consegui deixar os cards do tamanho certo mudando indivualmente
-                    _buildCard('Registrar Descarte', Icons.delete, 130),
-                    _buildCard('Estabelecimentos Parceiros', Icons.store, 130),
+                    _buildCard(
+                        'Identificar Objeto',
+                        Icons.camera_alt,
+                        130,
+                        '/home',
+                        context), //consegui deixar os cards do tamanho certo mudando indivualmente
+                    _buildCard('Registrar Descarte', Icons.delete, 130, '/home',
+                        context),
+                    _buildCard('Estabelecimentos Parceiros', Icons.store, 130,
+                        '/partners', context),
                   ],
                 ),
               ),
@@ -58,35 +66,41 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildCard(String text, IconData icon, double height) {
-    return SizedBox(
-      width: 300,
-      height: height,
-      child: Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                size: 50,
-                color: Colors.grey[700],
-              ),
-              SizedBox(height: 10),
-              Text(
-                text,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+  Widget _buildCard(
+      String text, IconData icon, double height, String rota, context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, rota);
+      },
+      child: SizedBox(
+        width: 300,
+        height: height,
+        child: Card(
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  icon,
+                  size: 50,
+                  color: Colors.grey[700],
                 ),
-                textAlign: TextAlign.center,
-              ),
-            ],
+                SizedBox(height: 10),
+                Text(
+                  text,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -97,7 +111,8 @@ class HomePage extends StatelessWidget {
 class InfosPerfil extends StatelessWidget {
   final String name; // variável para armazenar o nome
 
-  const InfosPerfil({super.key, required this.name}); // Aceitando o nome como parâmetro
+  const InfosPerfil(
+      {super.key, required this.name}); // Aceitando o nome como parâmetro
 
   @override
   Widget build(BuildContext context) {
