@@ -86,7 +86,7 @@ class ReasonScreen extends StatelessWidget {
                     left: 0,
                     child: Container(
                       width: screenWidth,
-                      height: screenHeight * 0.1, // altura do fundo verde
+                      height: screenHeight * 0.11, // altura do fundo verde
                       color: Color.fromRGBO(83, 128, 1, 1), // Fundo verde
                     ),
                   ),
