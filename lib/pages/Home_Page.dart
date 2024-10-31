@@ -23,8 +23,8 @@ class HomePage extends StatelessWidget {
                   children: [
                     _buildCard('Identificar Objeto', Icons.camera_alt, 130, '',
                         context), //consegui deixar os cards do tamanho certo mudando indivualmente
-                    _buildCard(
-                        'Registrar Descarte', Icons.delete, 130, '', context),
+                    _buildCard('Registrar Descarte', Icons.delete, 130,
+                        '/registerDiscard', context),
                     _buildCard('Estabelecimentos Parceiros', Icons.store, 130,
                         '/partners', context),
                   ],

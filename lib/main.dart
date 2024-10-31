@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:reciclaqui/pages/Home_Page.dart';
 import 'package:reciclaqui/pages/Login_Screen.dart';
+import 'package:reciclaqui/pages/Register_Discard.dart';
 import 'package:reciclaqui/pages/Signup_Screen.dart';
 import 'package:reciclaqui/pages/Welcome_Screen.dart';
 import 'package:reciclaqui/pages/Reason_Screen.dart';
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const HomePage(),
         '/reason': (context) => ReasonScreen(),
         '/partners': (context) => PartnersScreen(),
+        '/registerDiscard': (context) => RegisterDiscardPage(),
       },
     );
   }
