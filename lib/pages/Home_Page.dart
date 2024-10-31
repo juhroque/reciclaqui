@@ -36,7 +36,7 @@ class HomePage extends StatelessWidget {
             top: 30,
             left: 16,
             child: IconButton(
-              icon: Icon(Icons.help, color: Colors.black),
+              icon: Icon(Icons.help, color: Colors.white),
               onPressed: () {
                 // navegacao reason screen
                 Navigator.push(
@@ -50,7 +50,7 @@ class HomePage extends StatelessWidget {
             top: 30,
             right: 16,
             child: IconButton(
-              icon: Icon(Icons.search, color: Colors.black),
+              icon: Icon(Icons.search, color: Colors.white),
               onPressed: () {
                 // Ação ao pressionar o ícone de busca
                 print('Busca clicada');

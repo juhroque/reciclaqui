@@ -38,15 +38,15 @@ class WelcomeScreen extends StatelessWidget {
                     text: TextSpan(
                       text: 'Ainda não tem uma conta? ',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: const Color.fromRGBO(131, 126, 126, 1),
                         fontFamily: 'Roboto',
-                        fontSize: 14,
+                        fontSize: 16,
                       ),
                       children: [
                         TextSpan(
                           text: 'Sign up',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: const Color.fromRGBO(131, 126, 126, 1),
                             decoration: TextDecoration.underline, // Apenas "Sign up" sublinhado
                           ),
                           recognizer: TapGestureRecognizer()
@@ -116,7 +116,7 @@ class WelcomeScreen extends StatelessWidget {
                     left: 0,
                     child: Container(
                       width: screenWidth,
-                      height: screenHeight * 0.1, // altura do fundo verde
+                      height: screenHeight * 0.11, // altura do fundo verde
                       color: Color.fromRGBO(83, 128, 1, 1), // Fundo verde
                     ),
                   ),
