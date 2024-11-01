@@ -6,6 +6,7 @@ import 'package:reciclaqui/pages/Signup_Screen.dart';
 import 'package:reciclaqui/pages/Welcome_Screen.dart';
 import 'package:reciclaqui/pages/Reason_Screen.dart';
 import 'package:reciclaqui/pages/Partners_Screen.dart';
+import 'package:reciclaqui/pages/Search_Screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         '/reason': (context) => ReasonScreen(),
         '/partners': (context) => PartnersScreen(),
         '/registerDiscard': (context) => RegisterDiscardPage(),
+        '/search': (context) => SearchScreen(),
       },
     );
   }

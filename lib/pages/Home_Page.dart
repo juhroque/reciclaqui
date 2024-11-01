@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'Reason_Screen.dart'; // navegacao
+import 'Reason_Screen.dart'; // navegaca
+import 'Search_Screen.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -52,8 +53,10 @@ class HomePage extends StatelessWidget {
             child: IconButton(
               icon: Icon(Icons.search, color: Colors.white),
               onPressed: () {
-                // Ação ao pressionar o ícone de busca
-                print('Busca clicada');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SearchScreen()),
+                );
               },
             ),
           ),
