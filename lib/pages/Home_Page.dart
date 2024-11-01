@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'Reason_Screen.dart'; // navegaca
 import 'Search_Screen.dart';
+import 'Pontos_Screen.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -109,66 +110,77 @@ class HomePage extends StatelessWidget {
 }
 
 class InfosPerfil extends StatelessWidget {
-  final String name; // variável para armazenar o nome
+  final String name;
 
-  const InfosPerfil(
-      {super.key, required this.name}); // Aceitando o nome como parâmetro
+  const InfosPerfil({super.key, required this.name});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: 256,
-      child: Stack(
-        children: <Widget>[
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              height: 256,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(15),
-                  bottomRight: Radius.circular(15),
+    return GestureDetector(
+      onTap: () {
+        // Navegação para a tela PontosScreen ao clicar no painel de perfil
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PontosScreen(),
+            settings: RouteSettings(arguments: name),
+          ),
+        );
+      },
+      child: Container(
+        width: double.infinity,
+        height: 256,
+        child: Stack(
+          children: <Widget>[
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                height: 256,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(15),
+                    bottomRight: Radius.circular(15),
+                  ),
+                  color: Color.fromRGBO(83, 128, 1, 1),
                 ),
-                color: Color.fromRGBO(83, 128, 1, 1),
               ),
             ),
-          ),
-          Positioned(
-            top: 47,
-            left: 0,
-            right: 0,
-            child: Column(
-              children: [
-                CircleAvatar(
-                  radius: 50,
-                  backgroundImage: AssetImage('assets/images/Icon.png'),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  name, // Exibindo o nome do usuário
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+            Positioned(
+              top: 47,
+              left: 0,
+              right: 0,
+              child: Column(
+                children: [
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundImage: AssetImage('assets/images/Icon.png'),
                   ),
-                ),
-                SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildProfileStat('1989', 'Pontos'),
-                    _buildProfileStat('101', 'Reciclagens'),
-                    _buildProfileStat('13', 'Ranking'),
-                  ],
-                ),
-              ],
+                  SizedBox(height: 10),
+                  Text(
+                    name, // Exibindo o nome do usuário
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _buildProfileStat('1989', 'Pontos'),
+                      _buildProfileStat('101', 'Reciclagens'),
+                      _buildProfileStat('13', 'Ranking'),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

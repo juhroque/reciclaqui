@@ -7,6 +7,8 @@ import 'package:reciclaqui/pages/Welcome_Screen.dart';
 import 'package:reciclaqui/pages/Reason_Screen.dart';
 import 'package:reciclaqui/pages/Partners_Screen.dart';
 import 'package:reciclaqui/pages/Search_Screen.dart';
+import 'package:reciclaqui/pages/Pontos_Screen.dart';
+import 'package:reciclaqui/pages/Detail_Screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -19,7 +21,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/', //  rota inicial
+      initialRoute: '/',
       routes: {
         '/': (context) => WelcomeScreen(),
         '/login': (context) => LoginScreen(),
@@ -29,7 +31,22 @@ class MyApp extends StatelessWidget {
         '/partners': (context) => PartnersScreen(),
         '/registerDiscard': (context) => RegisterDiscardPage(),
         '/search': (context) => SearchScreen(),
+        '/pontos': (context) => PontosScreen(),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == '/detail') {
+          final args = settings.arguments as Map<String, dynamic>;
+          return MaterialPageRoute(
+            builder: (context) => DetailScreen(
+              itemName: args['itemName'],
+              itemDescription: args['itemDescription'],
+              imageUrl: args['imageUrl'],
+            ),
+          );
+        }
+        return null; 
       },
     );
   }
 }
+
