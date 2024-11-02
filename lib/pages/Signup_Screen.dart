@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:reciclaqui/services/database_service_usuarios.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:reciclaqui/database/DataBaseHelper.dart';
 
+import '../models/Usuario.dart';
+
 class SignupScreen extends StatelessWidget {
-  final TextEditingController nameController = TextEditingController(); // Controlador para o nome
-  final TextEditingController emailController = TextEditingController(); // Controlador para o email
-  final TextEditingController passwordController = TextEditingController(); // Controlador para a senha
+  final DatabaseServiceUsers databaseServiceUsers = DatabaseServiceUsers();
+  final TextEditingController nameController =
+      TextEditingController(); // Controlador para o nome
+  final TextEditingController emailController =
+      TextEditingController(); // Controlador para o email
+  final TextEditingController passwordController =
+      TextEditingController(); // Controlador para a senha
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +67,17 @@ class SignupScreen extends StatelessWidget {
                 // Inserir dados no banco
                 final dbHelper = DatabaseHelper();
                 await dbHelper.insertUser(nome_usuario, email);
+
+                //Inserir no banco do firebase
+                final user = Usuario(
+                    nomeUsuario: nome_usuario,
+                    email: email,
+                    pontosTotais: 0,
+                    firebaseUuid: 'VtKme8GHebVs1rRseaPk52tG9il1');
+                print(user);
+                databaseServiceUsers.addUsuario(user);
+
+                
 
                 // Navegar para a HomePage, passando o nome
                 Navigator.pushNamed(context, '/home', arguments: nome_usuario);
