@@ -48,83 +48,133 @@ class _PontosScreenState extends State<PontosScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Seu perfil"),
-        backgroundColor: Color.fromRGBO(83, 128, 1, 1),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text(
-                  userName,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black54,
-                  ),
-                ),
-                SizedBox(width: 8),
-                IconButton(
-                  icon: Icon(Icons.edit, color: Colors.grey),
-                  onPressed: _showEditNameDialog,
-                ),
-              ],
-            ),
-            SizedBox(height: 10),
-            Text(
-              "Seus pontos no ReciclAqui!",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.black54,
+  void _showDeleteAccountDialog() {
+    TextEditingController _emailController = TextEditingController();
+    TextEditingController _passwordController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Confirmação de Exclusão"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text("Tem certeza de que deseja excluir sua conta?"),
+              SizedBox(height: 16),
+              TextField(
+                controller: _emailController,
+                decoration: InputDecoration(labelText: "E-mail"),
               ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              "1989 Pontos",
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Color.fromRGBO(83, 128, 1, 1),
+              TextField(
+                controller: _passwordController,
+                obscureText: true,
+                decoration: InputDecoration(labelText: "Senha"),
               ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Cancelar"),
             ),
-            SizedBox(height: 30),
-            Text(
-              "Seu histórico de Descartes",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.black54,
-              ),
+            ElevatedButton(
+              onPressed: () {
+                // logica exclusa0
+                Navigator.of(context).pop();
+              },
+              child: Text("Confirmar"),
             ),
-            SizedBox(height: 10),
-            Divider(),
-            _buildHistoricoItem(
-              "Garrafa de Água",
-              "Categoria - 1 Unidade\n500 gramas (peso)\nNome Local",
-              "+ 2 pontos no ReciclAqui!",
-              context,
-            ),
-            Divider(),
-            _buildHistoricoItem(
-              "Bateria Alcalina",
-              "Plástico - 1 Unidade\n50 gramas\nLocal Fictício",
-              "+ 3 pontos no ReciclAqui!",
-              context,
-            ),
-            Divider(),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
+
+  @override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text("Seu perfil"),
+      backgroundColor: Color.fromRGBO(83, 128, 1, 1),
+    ),
+    body: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                userName,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black54,
+                ),
+              ),
+              SizedBox(width: 8),
+              IconButton(
+                icon: Icon(Icons.edit, color: Colors.grey),
+                onPressed: _showEditNameDialog,
+              ),
+              IconButton(
+                icon: Icon(Icons.close, color: Colors.red),
+                onPressed: _showDeleteAccountDialog,
+              ),
+            ],
+          ),
+          SizedBox(height: 10),
+          Text(
+            "Seus pontos no ReciclAqui!",
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black54,
+            ),
+          ),
+          SizedBox(height: 10),
+          Text(
+            "1989 Pontos",
+            style: TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+              color: Color.fromRGBO(83, 128, 1, 1),
+            ),
+          ),
+          SizedBox(height: 30),
+          Text(
+            "Seu histórico de Descartes",
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black54,
+            ),
+          ),
+          SizedBox(height: 10),
+          Divider(),
+          _buildHistoricoItem(
+            "Garrafa de Água",
+            "Categoria - 1 Unidade\n500 gramas (peso)\nNome Local",
+            "+ 2 pontos no ReciclAqui!",
+            context,
+          ),
+          Divider(),
+          _buildHistoricoItem(
+            "Bateria Alcalina",
+            "Plástico - 1 Unidade\n50 gramas\nLocal Fictício",
+            "+ 3 pontos no ReciclAqui!",
+            context,
+          ),
+          Divider(),
+        ],
+      ),
+    ),
+  );
+}
+
 
   Widget _buildHistoricoItem(String titulo, String descricao, String pontos, BuildContext context) {
     return Padding(
@@ -190,7 +240,7 @@ class _PontosScreenState extends State<PontosScreen> {
             TextButton(
               child: Text("Apagar", style: TextStyle(color: Colors.red)),
               onPressed: () {
-                // tem q colocar alguma logics p apagar 
+                //lógica para apagar o item do histórico
                 Navigator.of(context).pop();
               },
             ),
@@ -200,3 +250,4 @@ class _PontosScreenState extends State<PontosScreen> {
     );
   }
 }
+
