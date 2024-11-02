@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:reciclaqui/database/DataBaseHelper.dart';
+import 'package:reciclaqui/database/UserArguments.dart';
 
 class LoginScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
@@ -11,13 +12,17 @@ class LoginScreen extends StatelessWidget {
 
   Future<void> _login(BuildContext context) async {
     String email = emailController.text.trim();
-    bool userExists = await DatabaseHelper().isUserRegistered(email);
+    String? nomeUsuario = await DatabaseHelper().isUserRegistered(email);
 
-    if (userExists) {
-      // Redireciona para a tela principal caso o usuário exista
-      Navigator.pushNamed(context, '/home', arguments: email);
+    // Redireciona para a tela principal caso o usuário exista
+    if (nomeUsuario != null) {
+      Navigator.pushNamed(
+        context,
+        '/home',
+        arguments: UserArguments(email, nomeUsuario),
+      );
+
     } else {
-      // Exibe uma mensagem caso o usuário não seja encontrado
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Conta não encontrada. Registre-se primeiro.'),
@@ -127,4 +132,3 @@ class LoginScreen extends StatelessWidget {
     );
   }
 }
-

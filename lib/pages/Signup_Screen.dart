@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:reciclaqui/database/DataBaseHelper.dart';
+import 'package:reciclaqui/database/UserArguments.dart';
+
 
 class SignupScreen extends StatelessWidget {
-  final TextEditingController nameController = TextEditingController(); // Controlador para o nome
-  final TextEditingController emailController = TextEditingController(); // Controlador para o email
-  final TextEditingController passwordController = TextEditingController(); // Controlador para a senha
+  final TextEditingController nameController =
+      TextEditingController(); // Controlador para o nome
+  final TextEditingController emailController =
+      TextEditingController(); // Controlador para o email
+  final TextEditingController passwordController =
+      TextEditingController(); // Controlador para a senha
 
   @override
   Widget build(BuildContext context) {
@@ -55,14 +60,38 @@ class SignupScreen extends StatelessWidget {
               onPressed: () async {
                 final nome_usuario = nameController.text;
                 final email = emailController.text;
-                //final senha = passwordController.text;
-
-                // Inserir dados no banco
                 final dbHelper = DatabaseHelper();
-                await dbHelper.insertUser(nome_usuario, email);
 
-                // Navegar para a HomePage, passando o nome
-                Navigator.pushNamed(context, '/home', arguments: nome_usuario);
+                // Verifica se o email já existe
+                bool emailExists = await dbHelper.emailExists(email);
+
+                if (emailExists) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("Erro"),
+                        content:
+                            Text("Este email já está cadastrado. Tente outro."),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text("OK"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                } else {
+                  await dbHelper.insertUser(nome_usuario, email);
+                  Navigator.pushNamed(
+                    context,
+                    '/home',
+                    arguments: UserArguments(email, nome_usuario),
+                  );
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green[700],

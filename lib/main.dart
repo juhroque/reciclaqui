@@ -11,6 +11,9 @@ import 'package:reciclaqui/pages/Pontos_Screen.dart';
 import 'package:reciclaqui/pages/Detail_Screen.dart';
 
 void main() {
+  FlutterError.onError = (FlutterErrorDetails details) {
+    // Log or handle the error details
+  };
   runApp(const MyApp());
 }
 
@@ -29,7 +32,11 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const HomePage(),
         '/reason': (context) => ReasonScreen(),
         '/partners': (context) => PartnersScreen(),
-        '/registerDiscard': (context) => RegisterDiscardPage(),
+        '/registerDiscard': (context) {
+          final int idUsuario =
+              ModalRoute.of(context)!.settings.arguments as int;
+          return RegisterDiscardPage(idUsuario: idUsuario);
+        },
         '/search': (context) => SearchScreen(),
         '/pontos': (context) => PontosScreen(),
       },
@@ -44,9 +51,8 @@ class MyApp extends StatelessWidget {
             ),
           );
         }
-        return null; 
+        return null;
       },
     );
   }
 }
-
