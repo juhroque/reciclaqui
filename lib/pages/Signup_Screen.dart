@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:reciclaqui/database/DataBaseHelper.dart';
 
 class SignupScreen extends StatelessWidget {
   final TextEditingController nameController = TextEditingController(); // Controlador para o nome
+  final TextEditingController emailController = TextEditingController(); // Controlador para o email
+  final TextEditingController passwordController = TextEditingController(); // Controlador para a senha
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +40,7 @@ class SignupScreen extends StatelessWidget {
               decoration: InputDecoration(labelText: 'Nome'),
             ),
             TextField(
+              controller: emailController, //usando o controlador
               decoration: InputDecoration(labelText: 'Email'),
             ),
             TextField(
@@ -48,9 +52,17 @@ class SignupScreen extends StatelessWidget {
             ),
             SizedBox(height: 30),
             ElevatedButton(
-              onPressed: () {
-                // Navegar para HomePage passando o nome
-                Navigator.pushNamed(context, '/home', arguments: nameController.text);
+              onPressed: () async {
+                final nome_usuario = nameController.text;
+                final email = emailController.text;
+                //final senha = passwordController.text;
+
+                // Inserir dados no banco
+                final dbHelper = DatabaseHelper();
+                await dbHelper.insertUser(nome_usuario, email);
+
+                // Navegar para a HomePage, passando o nome
+                Navigator.pushNamed(context, '/home', arguments: nome_usuario);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green[700],

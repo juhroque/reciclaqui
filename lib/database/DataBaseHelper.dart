@@ -21,7 +21,25 @@ class DatabaseHelper {
       path,
       version: 1,
       onCreate: (db, version) async {
+        await db.execute('''
+        CREATE TABLE usuario (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          nome_usuario TEXT,
+          email TEXT,
+          pontos_totais INTEGER DEFAULT 0
+        )
+      ''');
       },
     );
+  }
+
+  Future<int> insertUser(String nome, String email) async {
+    final db = await database;
+    Map<String, dynamic> user = {
+      'nome_usuario': nome,
+      'email': email,
+      'pontos_totais': 0,
+    };
+    return await db.insert('usuario', user);
   }
 }
