@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:reciclaqui/database/DataBaseHelper.dart';
-import 'Home_Page.dart';
 
 class RegisterDiscardPage extends StatefulWidget {
   final int idUsuario; // Recebe o ID do usuário
@@ -79,9 +78,35 @@ class _RegisterDiscardPageState extends State<RegisterDiscardPage> {
           DropdownButtonFormField<String>(
             items: [
               DropdownMenuItem(
-                  value: 'Categoria 1', child: Text('Categoria 1')),
+                  value: 'Restos de Alimentos',
+                  child: Text('Restos de Alimentos')),
               DropdownMenuItem(
-                  value: 'Categoria 2', child: Text('Categoria 2')),
+                  value: 'Cascas de Frutas', child: Text('Cascas de Frutas')),
+              DropdownMenuItem(value: 'Vegetais', child: Text('Vegetais')),
+              DropdownMenuItem(
+                  value: 'Outros Biodegradáveis',
+                  child: Text('Outros Biodegradáveis')),
+              DropdownMenuItem(
+                  value: 'Papéis/Papelão', child: Text('Papéis/Papelão')),
+              DropdownMenuItem(value: 'Plásticos', child: Text('Plásticos')),
+              DropdownMenuItem(value: 'Vidros', child: Text('Vidros')),
+              DropdownMenuItem(value: 'Metais', child: Text('Metais')),
+              DropdownMenuItem(value: 'Pilhas', child: Text('Pilhas')),
+              DropdownMenuItem(value: 'Baterias', child: Text('Baterias')),
+              DropdownMenuItem(value: 'Lâmpadas', child: Text('Lâmpadas')),
+              DropdownMenuItem(
+                  value: 'Medicamentos', child: Text('Medicamentos')),
+              DropdownMenuItem(value: 'Celulares', child: Text('Celulares')),
+              DropdownMenuItem(
+                  value: 'Computadores', child: Text('Computadores')),
+              DropdownMenuItem(
+                  value: 'Eletrodomésticos', child: Text('Eletrodomésticos')),
+              DropdownMenuItem(
+                  value: 'Papéis Higiênicos', child: Text('Papéis Higiênicos')),
+              DropdownMenuItem(value: 'Fraldas', child: Text('Fraldas')),
+              DropdownMenuItem(
+                  value: 'Esponjas Usadas', child: Text('Esponjas Usadas')),
+              DropdownMenuItem(value: 'Outro', child: Text('Outro')),
             ],
             onChanged: (value) {
               setState(() {
@@ -120,12 +145,10 @@ class _RegisterDiscardPageState extends State<RegisterDiscardPage> {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text('Descarte registrado com sucesso!')));
 
-                // Redireciona para a página Home_Page após a confirmação
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomePage()),
-                );
+                // Fecha o pop-up
+                Navigator.of(context).pop();
 
+                // Limpa os campos
                 objetoController.clear();
                 quantidadeController.clear();
                 localDeDescarteController.clear();

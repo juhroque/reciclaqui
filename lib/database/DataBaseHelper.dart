@@ -19,7 +19,7 @@ class DatabaseHelper {
     String path = join(await getDatabasesPath(), 'reciclaqui.db');
     return await openDatabase(
       path,
-      version: 2,
+      version: 1,
       onCreate: (db, version) async {
         await db.execute('''
       CREATE TABLE usuario (
@@ -29,6 +29,7 @@ class DatabaseHelper {
         pontos_totais INTEGER DEFAULT 0
       )
       ''');
+
 
         await db.execute('''
       CREATE TABLE descarte (
@@ -42,6 +43,7 @@ class DatabaseHelper {
         FOREIGN KEY (id_usuario) REFERENCES usuario (id)
       )
       ''');
+
       },
     );
   }
@@ -63,7 +65,7 @@ class DatabaseHelper {
     }
   }
 
-   //retorna o ID pelo email
+  //retorna o ID pelo email
   Future<int?> getUserIdByEmail(String email) async {
     final db = await database;
     List<Map<String, dynamic>> result = await db.query(
@@ -85,14 +87,13 @@ class DatabaseHelper {
     final db = await database;
     List<Map<String, dynamic>> result = await db.query(
       'usuario',
-      columns: ['nome_usuario'], 
+      columns: ['nome_usuario'],
       where: 'email = ?',
       whereArgs: [email],
     );
 
     if (result.isNotEmpty) {
-      return result.first['nome_usuario']
-          as String;
+      return result.first['nome_usuario'] as String;
     } else {
       return null;
     }
@@ -151,9 +152,14 @@ class DatabaseHelper {
     final db = await database;
 
     int pontos;
-    if (categoria == 'Categoria 1') {
+    if (categoria == 'Celulares' ||
+        categoria == "Computadores" ||
+        categoria == "Eletrodomésticos") {
       pontos = 15;
-    } else if (categoria == 'Categoria 2') {
+    } else if (categoria == 'Pilhas' ||
+        categoria == "Baterias" ||
+        categoria == "Lâmpadas" ||
+        categoria == "Medicamentos") {
       pontos = 10;
     } else {
       pontos = 5;
@@ -169,5 +175,26 @@ class DatabaseHelper {
     };
 
     return await db.insert('descarte', discard);
+  }
+
+  //retorna os descartes do usuario com base em seu ID
+  Future<List<Map<String, dynamic>>> getDescartes(int userId) async {
+    final db = await database;
+    return await db.query(
+      'descarte',
+      where: 'id_usuario = ?',
+      whereArgs: [userId],
+    );
+  }
+
+//pegar soma dos pontos de um usuario
+  Future<int> getUserPoints(int userId) async {
+    final Database db = await database;
+    var result = await db.rawQuery(
+        'SELECT SUM(pontos) AS total FROM descartes WHERE id_usuario = ?',
+        [userId]);
+    return result.isNotEmpty && result[0]['total'] != null
+        ? result[0]['total'] as int
+        : 0;
   }
 }
