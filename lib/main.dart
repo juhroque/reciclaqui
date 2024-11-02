@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:reciclaqui/pages/Home_Page.dart';
 import 'package:reciclaqui/pages/Login_Screen.dart';
@@ -8,12 +9,15 @@ import 'package:reciclaqui/pages/Reason_Screen.dart';
 import 'package:reciclaqui/pages/Partners_Screen.dart';
 import 'package:reciclaqui/pages/Search_Screen.dart';
 import 'package:reciclaqui/pages/Pontos_Screen.dart';
+import 'firebase_options.dart';
+
 import 'package:reciclaqui/pages/Detail_Screen.dart';
 
 void main() {
   FlutterError.onError = (FlutterErrorDetails details) {
     // Log or handle the error details
   };
+
   runApp(const MyApp());
 }
 
