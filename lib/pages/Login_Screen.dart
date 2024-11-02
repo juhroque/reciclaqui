@@ -1,10 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
+import 'package:reciclaqui/database/DataBaseHelper.dart';
 
 class LoginScreen extends StatelessWidget {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  LoginScreen({Key? key}) : super(key: key);
+
+  Future<void> _login(BuildContext context) async {
+    String email = emailController.text.trim();
+    bool userExists = await DatabaseHelper().isUserRegistered(email);
+
+    if (userExists) {
+      // Redireciona para a tela principal caso o usuário exista
+      Navigator.pushNamed(context, '/home', arguments: email);
+    } else {
+      // Exibe uma mensagem caso o usuário não seja encontrado
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Conta não encontrada. Registre-se primeiro.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final TextEditingController nameController = TextEditingController();
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -33,11 +57,12 @@ class LoginScreen extends StatelessWidget {
             Text('Que bom te ver de novo!', style: TextStyle(fontSize: 16)),
             SizedBox(height: 20),
             TextField(
-              controller: nameController,
+              controller: emailController,
               decoration: InputDecoration(labelText: 'Email'),
             ),
             SizedBox(height: 10),
             TextField(
+              controller: passwordController,
               decoration: InputDecoration(
                 labelText: 'Senha',
                 suffixIcon: Icon(Icons.visibility),
@@ -47,15 +72,14 @@ class LoginScreen extends StatelessWidget {
             SizedBox(height: 10),
             Align(
               alignment: Alignment.centerRight,
-              child: Text('Esqueci minha senha',
-                  style: TextStyle(color: Colors.blue)),
+              child: Text(
+                'Esqueci minha senha',
+                style: TextStyle(color: Colors.blue),
+              ),
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/home',
-                    arguments: nameController.text);
-              },
+              onPressed: () => _login(context),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green[700],
                 padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
@@ -84,13 +108,12 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  // Função para criar os botões de login social com imagens
   Widget _buildSocialButton(String imagePath) {
     return InkWell(
       onTap: () {},
       child: Container(
-        width: 50, // Largura fixa para os botões ficarem uniformes
-        height: 50, // Altura fixa para os botões ficarem quadrados
+        width: 50,
+        height: 50,
         padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey),
@@ -98,9 +121,10 @@ class LoginScreen extends StatelessWidget {
         ),
         child: Image.asset(
           imagePath,
-          fit: BoxFit.contain, // Mantém a imagem dentro do botão
+          fit: BoxFit.contain,
         ),
       ),
     );
   }
 }
+

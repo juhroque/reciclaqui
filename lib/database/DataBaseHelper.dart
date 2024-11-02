@@ -42,4 +42,16 @@ class DatabaseHelper {
     };
     return await db.insert('usuario', user);
   }
+
+  Future<bool> isUserRegistered(String email) async {
+  final db = await database;
+  List<Map<String, dynamic>> result = await db.query(
+    'usuario',
+    where: 'email = ?',
+    whereArgs: [email],
+  );
+  return result.isNotEmpty;
+}
+
+
 }
