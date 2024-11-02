@@ -13,10 +13,16 @@ import 'firebase_options.dart';
 
 import 'package:reciclaqui/pages/Detail_Screen.dart';
 
-void main() {
+void main() async {
   FlutterError.onError = (FlutterErrorDetails details) {
     // Log or handle the error details
   };
+
+  WidgetsFlutterBinding
+      .ensureInitialized(); // Necessário para o uso de 'async' no main
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   runApp(const MyApp());
 }
