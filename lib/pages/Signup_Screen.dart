@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:reciclaqui/services/database_service_usuarios.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:reciclaqui/database/DataBaseHelper.dart';
 import 'package:reciclaqui/database/UserArguments.dart';
 
+ 
+import '../models/Usuario.dart';
 
-class SignupScreen extends StatelessWidget {
+class SignupScreen extends StatelessWidget {   
+  final DatabaseServiceUsers databaseServiceUsers = DatabaseServiceUsers();
   final TextEditingController nameController =
       TextEditingController(); // Controlador para o nome
   final TextEditingController emailController =
@@ -92,6 +96,20 @@ class SignupScreen extends StatelessWidget {
                     arguments: UserArguments(email, nome_usuario),
                   );
                 }
+
+                //Inserir no banco do firebase
+                final user = Usuario(
+                    nomeUsuario: nome_usuario,
+                    email: email,
+                    pontosTotais: 0,
+                    firebaseUuid: '');
+                print(user);
+                databaseServiceUsers.addUsuario(user);
+
+                
+
+                // Navegar para a HomePage, passando o nome
+                Navigator.pushNamed(context, '/home', arguments: nome_usuario);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green[700],
