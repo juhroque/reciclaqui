@@ -10,11 +10,34 @@ class PontosScreen extends StatefulWidget {
 
 class _PontosScreenState extends State<PontosScreen> {
   late String userName;
+  List<Map<String, dynamic>> _historicoDescartes = []; //armazenar descartes
+  num _totalPontos = 0; //armazenar os pontos
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     userName = ModalRoute.of(context)!.settings.arguments as String;
+    _loadHistoricoDescartes(); //pegar descartes
+  }
+
+  Future<void> _loadHistoricoDescartes() async {
+    // Método para buscar o histórico de descartes no banco de dados
+    final Database db = await DatabaseHelper().database;
+    List<Map<String, dynamic>> descartaData = await db.query('descarte');
+
+    setState(() {
+      _historicoDescartes = descartaData; //atualizar
+      _loadTotalPontos(); //pegar pontos
+    });
+  }
+
+  void _loadTotalPontos() {
+    _totalPontos = _historicoDescartes.fold(0, (sum, descarte) {
+      return sum + (descarte['pontos'] ?? 0);
+    });
+
+    setState(
+        () {}); // Atualiza o estado para refletir as mudanças na contagem total de pontos.
   }
 
   void _showEditNameDialog() {
@@ -25,7 +48,6 @@ class _PontosScreenState extends State<PontosScreen> {
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
-        // Renomear aqui para evitar ambiguidade
         return AlertDialog(
           title: Text("Editar nome:"),
           content: Column(
@@ -158,7 +180,6 @@ class _PontosScreenState extends State<PontosScreen> {
                   int result = await DatabaseHelper().deleteUser(email);
 
                   if (result > 0) {
-                    // Conta deletada com sucesso
                     Navigator.of(context).pop();
                     showDialog(
                       context: context,
@@ -173,7 +194,7 @@ class _PontosScreenState extends State<PontosScreen> {
                                 Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
                                       builder: (context) => WelcomeScreen()),
-                                ); // Redireciona para a tela Welcome_Screen
+                                );
                               },
                               child: Text("OK"),
                             ),
@@ -182,7 +203,6 @@ class _PontosScreenState extends State<PontosScreen> {
                       },
                     );
                   } else {
-                    // Falha ao deletar a conta
                     showDialog(
                       context: context,
                       builder: (context) {
@@ -255,7 +275,7 @@ class _PontosScreenState extends State<PontosScreen> {
             ),
             SizedBox(height: 10),
             Text(
-              "0 Pontos",
+              "${_totalPontos} Pontos",
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
@@ -264,7 +284,7 @@ class _PontosScreenState extends State<PontosScreen> {
             ),
             SizedBox(height: 30),
             Text(
-              "Seu histórico de Descartes",
+              "Seu histórico de descartes",
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -273,20 +293,26 @@ class _PontosScreenState extends State<PontosScreen> {
             ),
             SizedBox(height: 10),
             Divider(),
-            _buildHistoricoItem(
-              "Garrafa de Água",
-              "Categoria - 1 Unidade\n500 gramas (peso)\nNome Local",
-              "+ 2 pontos no ReciclAqui!",
-              context,
+            // Construindo a lista de descartes
+            Expanded(
+              child: ListView.builder(
+                itemCount: _historicoDescartes.length,
+                itemBuilder: (context, index) {
+                  final descarte = _historicoDescartes[index];
+                  return Column(
+                    children: [
+                      _buildHistoricoItem(
+                        descarte['objeto'],
+                        "${descarte['categoria']} - ${descarte['quantidade']} Unidade(s)\n${descarte['local_de_descarte']}",
+                        "+ ${descarte['pontos']} pontos no ReciclAqui!",
+                        context,
+                      ),
+                      Divider(),
+                    ],
+                  );
+                },
+              ),
             ),
-            Divider(),
-            _buildHistoricoItem(
-              "Bateria Alcalina",
-              "Plástico - 1 Unidade\n50 gramas\nLocal Fictício",
-              "+ 3 pontos no ReciclAqui!",
-              context,
-            ),
-            Divider(),
           ],
         ),
       ),
@@ -311,60 +337,24 @@ class _PontosScreenState extends State<PontosScreen> {
                     color: Color.fromRGBO(83, 128, 1, 1),
                   ),
                 ),
-                SizedBox(height: 5),
+                SizedBox(height: 4),
                 Text(
                   descricao,
-                  style: TextStyle(color: Colors.black54),
+                  style: TextStyle(color: Colors.grey[600]),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  pontos,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromRGBO(83, 128, 1, 1),
+                  ),
                 ),
               ],
             ),
           ),
-          Column(
-            children: [
-              Text(
-                pontos,
-                style: TextStyle(
-                  color: Colors.black54,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              IconButton(
-                icon: Icon(Icons.delete, color: Colors.red),
-                onPressed: () {
-                  _showDeleteConfirmationDialog(context, titulo);
-                },
-              ),
-            ],
-          ),
         ],
       ),
-    );
-  }
-
-  void _showDeleteConfirmationDialog(BuildContext context, String titulo) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Apagar descarte"),
-          content: Text("Tem certeza que deseja apagar o descarte de $titulo?"),
-          actions: [
-            TextButton(
-              child: Text("Cancelar"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text("Apagar", style: TextStyle(color: Colors.red)),
-              onPressed: () {
-                //lógica para apagar o item do histórico
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
     );
   }
 }
