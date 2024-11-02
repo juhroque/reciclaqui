@@ -13,12 +13,11 @@ import 'firebase_options.dart';
 
 import 'package:reciclaqui/pages/Detail_Screen.dart';
 
-Future<void> main() async {
-   WidgetsFlutterBinding
-      .ensureInitialized(); // Necessário para o uso de 'async' no main
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+void main() {
+  FlutterError.onError = (FlutterErrorDetails details) {
+    // Log or handle the error details
+  };
+
   runApp(const MyApp());
 }
 
@@ -37,7 +36,11 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const HomePage(),
         '/reason': (context) => ReasonScreen(),
         '/partners': (context) => PartnersScreen(),
-        '/registerDiscard': (context) => RegisterDiscardPage(),
+        '/registerDiscard': (context) {
+          final int idUsuario =
+              ModalRoute.of(context)!.settings.arguments as int;
+          return RegisterDiscardPage(idUsuario: idUsuario);
+        },
         '/search': (context) => SearchScreen(),
         '/pontos': (context) => PontosScreen(),
       },

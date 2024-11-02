@@ -1,15 +1,52 @@
 import 'package:flutter/material.dart';
-import 'Reason_Screen.dart'; // navegaca
+import 'package:reciclaqui/database/DataBaseHelper.dart';
+import 'Reason_Screen.dart';
 import 'Search_Screen.dart';
 import 'Pontos_Screen.dart';
+import 'package:reciclaqui/database/UserArguments.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int? userId;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (userId == null) {
+      _getUserId();
+    }
+  }
+
+  Future<void> _getUserId() async {
+    final route = ModalRoute.of(context);
+    if (route != null && route.settings.arguments is UserArguments) {
+      final UserArguments args = route.settings.arguments as UserArguments;
+      final String email = args.email;
+
+      int? id = await DatabaseHelper().getUserIdByEmail(email);
+      setState(() {
+        userId = id; // Atualiza o estado com o ID do usuário
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final String name = ModalRoute.of(context)!.settings.arguments
-        as String; // Capturando o nome do sign up
+    final UserArguments args =
+        ModalRoute.of(context)!.settings.arguments as UserArguments;
+    final String email = args.email;
+    final String name = args.nomeUsuario;
 
     return Scaffold(
       body: Stack(
@@ -17,16 +54,22 @@ class HomePage extends StatelessWidget {
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              InfosPerfil(name: name), // Passando o nome para InfosPerfil
-              SizedBox(height: 40), // Espaçamento entre o perfil e os cards
+              InfosPerfil(name: name),
+              SizedBox(height: 40),
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     _buildCard('Identificar Objeto', Icons.camera_alt, 130, '',
-                        context), //consegui deixar os cards do tamanho certo mudando indivualmente
-                    _buildCard('Registrar Descarte', Icons.delete, 130,
-                        '/registerDiscard', context),
+                        context),
+                    _buildCard(
+                      'Registrar Descarte',
+                      Icons.delete,
+                      130,
+                      '/registerDiscard',
+                      context,
+                      userId: userId, // Passando o userId como argumento
+                    ),
                     _buildCard('Estabelecimentos Parceiros', Icons.store, 130,
                         '/partners', context),
                   ],
@@ -40,7 +83,6 @@ class HomePage extends StatelessWidget {
             child: IconButton(
               icon: Icon(Icons.help, color: Colors.white),
               onPressed: () {
-                // navegacao reason screen
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => ReasonScreen()),
@@ -67,11 +109,21 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _buildCard(
-      String text, IconData icon, double height, String rota, context) {
+      String text, IconData icon, double height, String rota, context,
+      {int? userId}) {
     return GestureDetector(
       onTap: () {
-        // os que ainda nao tao com a rota configurada tao '' no parametro
-        if (rota != '') Navigator.pushNamed(context, rota);
+        if (rota == '/registerDiscard') {
+          if (userId != null) {
+            Navigator.pushNamed(context, rota, arguments: userId);
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text('Erro: ID do usuário não encontrado.'),
+            ));
+          }
+        } else if (rota != '') {
+          Navigator.pushNamed(context, rota);
+        }
       },
       child: SizedBox(
         width: 300,
@@ -118,7 +170,6 @@ class InfosPerfil extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Navegação para a tela PontosScreen ao clicar no painel de perfil
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -159,7 +210,7 @@ class InfosPerfil extends StatelessWidget {
                   ),
                   SizedBox(height: 10),
                   Text(
-                    name, // Exibindo o nome do usuário
+                    name,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white,
@@ -171,9 +222,9 @@ class InfosPerfil extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _buildProfileStat('1989', 'Pontos'),
-                      _buildProfileStat('101', 'Reciclagens'),
-                      _buildProfileStat('13', 'Ranking'),
+                      _buildProfileStat('0', 'Pontos'),
+                      _buildProfileStat('0', 'Reciclagens'),
+                      _buildProfileStat('0', 'Ranking'),
                     ],
                   ),
                 ],

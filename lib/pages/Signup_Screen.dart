@@ -3,10 +3,12 @@ import 'package:reciclaqui/services/database_service_usuarios.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:reciclaqui/database/DataBaseHelper.dart';
+import 'package:reciclaqui/database/UserArguments.dart';
 
+ 
 import '../models/Usuario.dart';
 
-class SignupScreen extends StatelessWidget {
+class SignupScreen extends StatelessWidget {   
   final DatabaseServiceUsers databaseServiceUsers = DatabaseServiceUsers();
   final TextEditingController nameController =
       TextEditingController(); // Controlador para o nome
@@ -62,18 +64,45 @@ class SignupScreen extends StatelessWidget {
               onPressed: () async {
                 final nome_usuario = nameController.text;
                 final email = emailController.text;
-                //final senha = passwordController.text;
-
-                // Inserir dados no banco
                 final dbHelper = DatabaseHelper();
-                await dbHelper.insertUser(nome_usuario, email);
+
+                // Verifica se o email já existe
+                bool emailExists = await dbHelper.emailExists(email);
+
+                if (emailExists) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("Erro"),
+                        content:
+                            Text("Este email já está cadastrado. Tente outro."),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text("OK"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                } else {
+                  await dbHelper.insertUser(nome_usuario, email);
+                  Navigator.pushNamed(
+                    context,
+                    '/home',
+                    arguments: UserArguments(email, nome_usuario),
+                  );
+                }
 
                 //Inserir no banco do firebase
                 final user = Usuario(
                     nomeUsuario: nome_usuario,
                     email: email,
                     pontosTotais: 0,
-                    firebaseUuid: 'VtKme8GHebVs1rRseaPk52tG9il1');
+                    firebaseUuid: '');
                 print(user);
                 databaseServiceUsers.addUsuario(user);
 

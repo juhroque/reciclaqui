@@ -1,10 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:reciclaqui/database/DataBaseHelper.dart';
+import 'Home_Page.dart';
 
-class RegisterDiscardPage extends StatelessWidget {
-  const RegisterDiscardPage({super.key});
+class RegisterDiscardPage extends StatefulWidget {
+  final int idUsuario; // Recebe o ID do usuário
+
+  const RegisterDiscardPage({Key? key, required this.idUsuario})
+      : super(key: key);
+
+  @override
+  _RegisterDiscardPageState createState() => _RegisterDiscardPageState();
+}
+
+class _RegisterDiscardPageState extends State<RegisterDiscardPage> {
+  final TextEditingController objetoController = TextEditingController();
+  final TextEditingController quantidadeController = TextEditingController();
+  final TextEditingController localDeDescarteController =
+      TextEditingController();
+  String? selectedCategoria;
+
+  @override
+  void dispose() {
+    objetoController.dispose();
+    quantidadeController.dispose();
+    localDeDescarteController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    // Obtém o idUsuario passado como argumento
+    final int idUsuario = ModalRoute.of(context)!.settings.arguments as int;
+
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
       appBar: _buildAppBar(context),
@@ -16,8 +43,7 @@ class RegisterDiscardPage extends StatelessWidget {
     );
   }
 
-  
-  AppBar _buildAppBar(context) {
+  AppBar _buildAppBar(BuildContext context) {
     return AppBar(
       backgroundColor: const Color(0xFFFFFFFF),
       title: Text(
@@ -38,7 +64,7 @@ class RegisterDiscardPage extends StatelessWidget {
     );
   }
 
-  Widget _buildFormulario(context) {
+  Widget _buildFormulario(BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(16.0),
       child: Column(
@@ -46,6 +72,7 @@ class RegisterDiscardPage extends StatelessWidget {
         children: [
           const SizedBox(height: 16),
           TextField(
+            controller: objetoController,
             decoration: inputDecoration('Objeto'),
           ),
           const SizedBox(height: 16),
@@ -56,21 +83,72 @@ class RegisterDiscardPage extends StatelessWidget {
               DropdownMenuItem(
                   value: 'Categoria 2', child: Text('Categoria 2')),
             ],
-            onChanged: (value) {},
+            onChanged: (value) {
+              setState(() {
+                selectedCategoria = value;
+              });
+            },
             decoration: inputDecoration('Categoria'),
           ),
           const SizedBox(height: 16),
           TextField(
+            controller: quantidadeController,
             decoration: inputDecoration('Quantidade'),
+            keyboardType: TextInputType.number,
           ),
           const SizedBox(height: 16),
           TextField(
+            controller: localDeDescarteController,
             decoration: inputDecoration('Local de Descarte'),
           ),
           const SizedBox(height: 30),
           ElevatedButton(
-            onPressed: () {
-              //TODO
+            onPressed: () async {
+              final objeto = objetoController.text;
+              final categoria = selectedCategoria;
+              final quantidade = int.tryParse(quantidadeController.text) ?? 0;
+              final localDeDescarte = localDeDescarteController.text;
+
+              if (objeto.isNotEmpty &&
+                  categoria != null &&
+                  quantidade > 0 &&
+                  localDeDescarte.isNotEmpty) {
+                final dbHelper = DatabaseHelper();
+                await dbHelper.insertDiscard(widget.idUsuario, objeto,
+                    categoria, quantidade, localDeDescarte);
+
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Descarte registrado com sucesso!')));
+
+                // Redireciona para a página Home_Page após a confirmação
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => HomePage()),
+                );
+
+                objetoController.clear();
+                quantidadeController.clear();
+                localDeDescarteController.clear();
+              } else {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: Text("Erro"),
+                      content: Text(
+                          "Por favor, preencha todos os campos corretamente."),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text("OK"),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.green[700],
@@ -80,23 +158,19 @@ class RegisterDiscardPage extends StatelessWidget {
               ),
             ),
             child: Text('Registrar Descarte',
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.white,
-                )),
+                style: TextStyle(fontSize: 18, color: Colors.white)),
           ),
         ],
       ),
     );
   }
 
-  InputDecoration inputDecoration(text) {
+  InputDecoration inputDecoration(String text) {
     return InputDecoration(
       labelText: text,
       labelStyle: const TextStyle(color: Color(0xFF837E7E)),
       floatingLabelBehavior: FloatingLabelBehavior.never,
-      contentPadding:
-          const EdgeInsets.only(bottom: 8), // Ajusta a posição do label
+      contentPadding: const EdgeInsets.only(bottom: 8),
     );
   }
 }
