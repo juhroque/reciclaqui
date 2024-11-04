@@ -1,10 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class Usuario {
   final String firebaseUuid;
   final String nomeUsuario;
   final String email;
-  final int pontosTotais;
+  int pontosTotais;
 
   Usuario({
     required this.firebaseUuid,
@@ -38,6 +36,7 @@ class Usuario {
       'nome_usuario': nomeUsuario,
       'email': email,
       'pontos_totais': pontosTotais,
+      'firebase_uuid': firebaseUuid,
     };
   }
 }

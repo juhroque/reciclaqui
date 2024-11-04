@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:reciclaqui/database/DataBaseHelper.dart';
+import 'package:reciclaqui/models/descarte.dart';
+import 'package:reciclaqui/services/database_service_descartes.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RegisterDiscardPage extends StatefulWidget {
-  final int idUsuario; // Recebe o ID do usuário
+  final int idUsuario;
 
   const RegisterDiscardPage({Key? key, required this.idUsuario})
       : super(key: key);
@@ -28,9 +31,6 @@ class _RegisterDiscardPageState extends State<RegisterDiscardPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Obtém o idUsuario passado como argumento
-    final int idUsuario = ModalRoute.of(context)!.settings.arguments as int;
-
     return Scaffold(
       backgroundColor: const Color(0xFFFFFFFF),
       appBar: _buildAppBar(context),
@@ -65,7 +65,7 @@ class _RegisterDiscardPageState extends State<RegisterDiscardPage> {
 
   Widget _buildFormulario(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -128,59 +128,16 @@ class _RegisterDiscardPageState extends State<RegisterDiscardPage> {
           ),
           const SizedBox(height: 30),
           ElevatedButton(
-            onPressed: () async {
-              final objeto = objetoController.text;
-              final categoria = selectedCategoria;
-              final quantidade = int.tryParse(quantidadeController.text) ?? 0;
-              final localDeDescarte = localDeDescarteController.text;
-
-              if (objeto.isNotEmpty &&
-                  categoria != null &&
-                  quantidade > 0 &&
-                  localDeDescarte.isNotEmpty) {
-                final dbHelper = DatabaseHelper();
-                await dbHelper.insertDiscard(widget.idUsuario, objeto,
-                    categoria, quantidade, localDeDescarte);
-
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Descarte registrado com sucesso!')));
-
-                // Fecha o pop-up
-                Navigator.of(context).pop();
-
-                // Limpa os campos
-                objetoController.clear();
-                quantidadeController.clear();
-                localDeDescarteController.clear();
-              } else {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: Text("Erro"),
-                      content: Text(
-                          "Por favor, preencha todos os campos corretamente."),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          child: Text("OK"),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              }
-            },
+            onPressed: _registerDiscard,
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.green[700],
-              padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 100, vertical: 15),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            child: Text('Registrar Descarte',
+            child: const Text('Registrar Descarte',
                 style: TextStyle(fontSize: 18, color: Colors.white)),
           ),
         ],
@@ -194,6 +151,81 @@ class _RegisterDiscardPageState extends State<RegisterDiscardPage> {
       labelStyle: const TextStyle(color: Color(0xFF837E7E)),
       floatingLabelBehavior: FloatingLabelBehavior.never,
       contentPadding: const EdgeInsets.only(bottom: 8),
+    );
+  }
+
+  Future<void> _registerDiscard() async {
+    final objeto = objetoController.text;
+    final categoria = selectedCategoria;
+    final quantidade = int.tryParse(quantidadeController.text) ?? 0;
+    final localDeDescarte = localDeDescarteController.text;
+
+    if (objeto.isNotEmpty &&
+        categoria != null &&
+        quantidade > 0 &&
+        localDeDescarte.isNotEmpty) {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      final String userUUID = prefs.getString("userLogado") ?? "";
+
+      await DatabaseHelper().insertDiscard(
+        widget.idUsuario,
+        objeto,
+        categoria,
+        quantidade,
+        localDeDescarte,
+        userUUID,
+      );
+
+      DatabaseServiceDescartes().addDescarte(
+        Descarte(
+          idUsuario: userUUID,
+          objeto: objeto,
+          categoria: categoria,
+          quantidade: quantidade,
+          localDeDescarte: localDeDescarte,
+        ),
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Descarte registrado com sucesso!')));
+
+      //add +1 na sharedpref de numeroDescartes
+      int numeroDescartes = prefs.getInt('numeroDescartes') ?? 0;
+      numeroDescartes++;
+      prefs.setInt('numeroDescartes', numeroDescartes);
+
+      // Limpa os campos após o registro
+      objetoController.clear();
+      quantidadeController.clear();
+      localDeDescarteController.clear();
+      setState(() {
+        selectedCategoria = null;
+      });
+
+      Navigator.of(context).pop(); // Fecha a página após o registro
+    } else {
+      _showErrorDialog("Por favor, preencha todos os campos corretamente.");
+    }
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Erro"),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
     );
   }
 }

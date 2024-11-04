@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:reciclaqui/services/database_service_descartes.dart';
+import 'package:reciclaqui/services/database_service_usuarios.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:reciclaqui/database/DataBaseHelper.dart';
 import 'package:reciclaqui/pages/Welcome_Screen.dart';
@@ -11,19 +14,35 @@ class PontosScreen extends StatefulWidget {
 class _PontosScreenState extends State<PontosScreen> {
   late String userName;
   List<Map<String, dynamic>> _historicoDescartes = []; //armazenar descartes
-  num _totalPontos = 0; //armazenar os pontos
+  num _totalPontos = 0; //armazenar os
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    userName = ModalRoute.of(context)!.settings.arguments as String;
-    _loadHistoricoDescartes(); //pegar descartes
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   userName = prefs.getString("nomeUsuario") ?? userName;
+  //   _loadHistoricoDescartes(); //pegar descartes
+  // }
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeUserData();
+  }
+
+  Future<void> _initializeUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userName = prefs.getString("nomeUsuario") ?? "Usuário";
+    });
+    _loadHistoricoDescartes();
   }
 
   Future<void> _loadHistoricoDescartes() async {
     // Método para buscar o histórico de descartes no banco de dados
     final Database db = await DatabaseHelper().database;
     List<Map<String, dynamic>> descartaData = await db.query('descarte');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    userName = prefs.getString("nomeUsuario") ?? userName;
 
     setState(() {
       _historicoDescartes = descartaData; //atualizar
@@ -35,6 +54,7 @@ class _PontosScreenState extends State<PontosScreen> {
     _totalPontos = _historicoDescartes.fold(0, (sum, descarte) {
       return sum + (descarte['pontos'] ?? 0);
     });
+    atualizarPontos(); //atualizar pontos no firestore do usuário
 
     setState(
         () {}); // Atualiza o estado para refletir as mudanças na contagem total de pontos.
@@ -104,11 +124,14 @@ class _PontosScreenState extends State<PontosScreen> {
                                 if (newName.isNotEmpty) {
                                   await DatabaseHelper()
                                       .updateUserName(userId, newName);
+
+                                  await atualizaNome(newName, email);
                                   setState(() {
                                     userName = newName;
                                   });
+                                  Navigator.of(editContext).pop();
+                                  Navigator.of(context).pop(newName);
                                 }
-                                Navigator.of(editContext).pop();
                               },
                               child: Text("Salvar"),
                             ),
@@ -356,5 +379,26 @@ class _PontosScreenState extends State<PontosScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> atualizarPontos() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String uuidUserLogado = prefs.getString("userLogado") ?? "";
+
+    DatabaseServiceDescartes().getByIdUsuario(uuidUserLogado).then((value) {
+      num pontos = _totalPontos;
+      prefs.setInt("pontosUsuario", pontos.toInt());
+      DatabaseServiceUsers().updatePontos(uuidUserLogado, pontos.toInt());
+    });
+  }
+
+  Future<void> atualizaNome(novoNome, email) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String uuidUserLogado = prefs.getString("userLogado") ?? "";
+    print("UUID: $uuidUserLogado");
+    print("Novo nome: $novoNome");
+    prefs.setString("nomeUsuario", novoNome);
+
+    DatabaseServiceUsers().updateNome(uuidUserLogado, novoNome);
   }
 }

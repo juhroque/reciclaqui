@@ -1,6 +1,8 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
+import '../services/database_service_usuarios.dart';
+
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
   factory DatabaseHelper() => _instance;
@@ -15,6 +17,7 @@ class DatabaseHelper {
     return _database!;
   }
 
+  // Inicializar a db caso abra pela primeira vez
   Future<Database> _initDB() async {
     String path = join(await getDatabasesPath(), 'reciclaqui.db');
     return await openDatabase(
@@ -30,7 +33,6 @@ class DatabaseHelper {
       )
       ''');
 
-
         await db.execute('''
       CREATE TABLE descarte (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -43,7 +45,6 @@ class DatabaseHelper {
         FOREIGN KEY (id_usuario) REFERENCES usuario (id)
       )
       ''');
-
       },
     );
   }
@@ -74,6 +75,8 @@ class DatabaseHelper {
       where: 'email = ?',
       whereArgs: [email],
     );
+
+    print('id: ${result.first['id']}');
 
     if (result.isNotEmpty) {
       return result.first['id'] as int;
@@ -148,7 +151,7 @@ class DatabaseHelper {
 
   //insere descarte
   Future<int> insertDiscard(int idUsuario, String objeto, String categoria,
-      int quantidade, String localDeDescarte) async {
+      int quantidade, String localDeDescarte, String userUUID) async {
     final db = await database;
 
     int pontos;
@@ -196,5 +199,15 @@ class DatabaseHelper {
     return result.isNotEmpty && result[0]['total'] != null
         ? result[0]['total'] as int
         : 0;
+  }
+
+  //deletar todos os descartes de um usuario
+  Future<int> deleteAllDiscards(int userId) async {
+    final db = await database;
+    return await db.delete(
+      'descarte',
+      where: 'id_usuario = ?',
+      whereArgs: [userId],
+    );
   }
 }

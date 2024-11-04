@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:reciclaqui/database/DataBaseHelper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../models/descarte.dart';
+import '../services/database_service_descartes.dart';
 import 'Reason_Screen.dart';
 import 'Search_Screen.dart';
 import 'Pontos_Screen.dart';
@@ -14,10 +17,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int? userId;
+  String userName = "";
 
   @override
   void initState() {
     super.initState();
+    _loadUserData();
   }
 
   @override
@@ -25,6 +30,48 @@ class _HomePageState extends State<HomePage> {
     super.didChangeDependencies();
     if (userId == null) {
       _getUserId();
+    }
+  }
+
+  Future<void> _loadUserData() async {
+    // Carrega o nome do SharedPreferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      userName = prefs.getString("nomeUsuario") ?? "Usuário";
+    });
+
+    // Sincroniza os descartes do Firestore com o SQLite
+    await syncDescartes();
+  }
+
+  Future<void> syncDescartes() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userUUID = prefs.getString('userLogado');
+    DatabaseHelper dbHelper = DatabaseHelper();
+    String email = prefs.getString('email') ?? '';
+    int? sqliteId = await dbHelper.getUserIdByEmail(email);
+    print('id: $sqliteId');
+    print('userUUID: $userUUID');
+    prefs.setInt('sqliteId', sqliteId!);
+    dbHelper.deleteAllDiscards(sqliteId);
+
+    int quantidadeDeDescartes = 0;
+    if (userUUID != null) {
+      List<Descarte> descartes =
+          await DatabaseServiceDescartes().getByIdUsuario(userUUID);
+      for (var descarte in descartes) {
+        quantidadeDeDescartes++;
+        await DatabaseHelper().insertDiscard(
+          prefs.getInt('sqliteId') ?? 0,
+          descarte.objeto,
+          descarte.categoria,
+          descarte.quantidade,
+          descarte.localDeDescarte,
+          userUUID,
+        );
+      }
+      prefs.setInt('numeroDescartes', quantidadeDeDescartes);
     }
   }
 
@@ -46,7 +93,25 @@ class _HomePageState extends State<HomePage> {
     final UserArguments args =
         ModalRoute.of(context)!.settings.arguments as UserArguments;
     final String email = args.email;
-    final String name = args.nomeUsuario;
+    String name = userName;
+    //prefs
+    int? pontos;
+
+    Future<int> loadPontos() async {
+      final prefs = await SharedPreferences.getInstance();
+      pontos = prefs.getInt("pontosUsuario");
+      // Use a logging framework instead of print
+      debugPrint('Pontos: $pontos');
+      return pontos ?? 0;
+    }
+
+    //load numero de descartes
+    Future<int> loadNumeroDescartes() async {
+      final prefs = await SharedPreferences.getInstance();
+      int numeroDescartes = prefs.getInt("numeroDescartes") ?? 0;
+      debugPrint('Número de descartes: $numeroDescartes');
+      return numeroDescartes;
+    }
 
     return Scaffold(
       body: Stack(
@@ -54,7 +119,43 @@ class _HomePageState extends State<HomePage> {
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              InfosPerfil(name: name),
+              FutureBuilder<int>(
+                future: loadPontos(),
+                builder: (context, pontosSnapshot) {
+                  if (pontosSnapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return CircularProgressIndicator();
+                  } else if (pontosSnapshot.hasError) {
+                    return Text('Erro ao carregar pontos');
+                  } else {
+                    // Depois que os pontos foram carregados, carregue o número de descartes
+                    return FutureBuilder<int>(
+                      future: loadNumeroDescartes(),
+                      builder: (context, descartesSnapshot) {
+                        if (descartesSnapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return CircularProgressIndicator(); // Exibe indicador de carregamento
+                        } else if (descartesSnapshot.hasError) {
+                          return Text('Erro ao carregar número de descartes');
+                        } else {
+                          return
+                              //depois carregar o nome
+                              InfosPerfil(
+                            name: name,
+                            onUpdateName: (newName) {
+                              setState(() {
+                                name = newName;
+                              });
+                            },
+                            pontos: pontosSnapshot.data ?? 0,
+                            numeroDescartes: descartesSnapshot.data ?? 0,
+                          );
+                        }
+                      },
+                    );
+                  }
+                },
+              ),
               SizedBox(height: 40),
               Expanded(
                 child: Column(
@@ -163,20 +264,31 @@ class _HomePageState extends State<HomePage> {
 
 class InfosPerfil extends StatelessWidget {
   final String name;
+  final Function(String) onUpdateName;
+  final int pontos;
+  final int numeroDescartes;
 
-  const InfosPerfil({super.key, required this.name});
+  const InfosPerfil(
+      {super.key,
+      required this.name,
+      required this.onUpdateName,
+      required this.pontos,
+      required this.numeroDescartes});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        final updatedName = await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => PontosScreen(),
-            settings: RouteSettings(arguments: name),
           ),
         );
+        // Se houver um novo nome, atualize-o na HomePage
+        if (updatedName != null) {
+          onUpdateName(updatedName);
+        }
       },
       child: Container(
         width: double.infinity,
@@ -222,8 +334,9 @@ class InfosPerfil extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _buildProfileStat('0', 'Pontos'),
-                      _buildProfileStat('0', 'Reciclagens'),
+                      _buildProfileStat(pontos.toString(), 'Pontos'),
+                      _buildProfileStat(
+                          numeroDescartes.toString(), 'Reciclagens'),
                       _buildProfileStat('0', 'Ranking'),
                     ],
                   ),

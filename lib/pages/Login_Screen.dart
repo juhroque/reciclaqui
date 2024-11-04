@@ -1,4 +1,11 @@
+import 'dart:math';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:reciclaqui/models/descarte.dart';
+import 'package:reciclaqui/services/database_service_descartes.dart';
+import 'package:reciclaqui/services/database_service_usuarios.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:reciclaqui/database/DataBaseHelper.dart';
@@ -21,7 +28,6 @@ class LoginScreen extends StatelessWidget {
         '/home',
         arguments: UserArguments(email, nomeUsuario),
       );
-
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -84,7 +90,8 @@ class LoginScreen extends StatelessWidget {
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () => _login(context),
+              onPressed: () => _loginThroughFirebaseAuth(
+                  context, emailController.text, passwordController.text),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green[700],
                 padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
@@ -131,4 +138,103 @@ class LoginScreen extends StatelessWidget {
       ),
     );
   }
+
+  Future<void> _loginThroughFirebaseAuth(
+      BuildContext context, email, password) async {
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Preencha todos os campos.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+    try {
+      final UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+
+      await setUsuarioLogado(email);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? nome = prefs.getString('nomeUsuario');
+
+      DatabaseHelper dbHelper = DatabaseHelper();
+      // if (nome != null) {
+      //   await dbHelper.insertUser(email, nome);
+      // } else {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     SnackBar(
+      //       content: Text('Erro: Nome do usuário não encontrado.'),
+      //       backgroundColor: Colors.red,
+      //     ),
+      //   );
+      // }
+      // print('emaaail: $email');
+      // int? sqliteId = await dbHelper.getUserIdByEmail(email);
+      // print('id: $sqliteId');
+      // prefs.setInt('sqliteId', sqliteId!);
+      //  syncDescartes();
+
+      Navigator.pushNamed(
+        context,
+        '/home',
+        arguments: UserArguments(email, nome!),
+      );
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro: ${e.message}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erro: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> setUsuarioLogado(String email) async {
+    DatabaseServiceUsers().getByEmail(email).then((usuario) async {
+      if (usuario != null) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        print('usuario: $usuario');
+        print("uuid: ${usuario.firebaseUuid}");
+        prefs.setString('userLogado', usuario.firebaseUuid);
+        prefs.setString('nomeUsuario', usuario.nomeUsuario);
+        prefs.setString('email', usuario.email);
+      }
+    });
+  }
+
+  //sincronizar os descartes com o firebase inserindo-os no banco local sqlite
+  // Future<void> syncDescartes() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? userUUID = prefs.getString('usuarioLogado');
+  //   DatabaseHelper dbHelper = DatabaseHelper();
+  //   String email = prefs.getString('email') ?? '';
+
+  //   await dbHelper.deleteAllDiscards(0);
+  //   int quantidadeDeDescartes = 0;
+  //   if (userUUID != null) {
+  //     List<Descarte> descartes =
+  //         await DatabaseServiceDescartes().getByIdUsuario(userUUID);
+  //     for (var descarte in descartes) {
+  //       print('descarte: $descarte');
+  //       quantidadeDeDescartes++;
+  //       await DatabaseHelper().insertDiscard(
+  //         prefs.getInt('sqliteId') ?? 0,
+  //         descarte.objeto,
+  //         descarte.categoria,
+  //         descarte.quantidade,
+  //         descarte.localDeDescarte,
+  //         userUUID,
+  //       );
+  //     }
+  //     prefs.setInt('numeroDescartes', quantidadeDeDescartes);
+  //   }
+  // }
 }

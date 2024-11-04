@@ -1,14 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:reciclaqui/services/database_service_usuarios.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:reciclaqui/database/DataBaseHelper.dart';
 import 'package:reciclaqui/database/UserArguments.dart';
 
- 
 import '../models/Usuario.dart';
 
-class SignupScreen extends StatelessWidget {   
+class SignupScreen extends StatelessWidget {
   final DatabaseServiceUsers databaseServiceUsers = DatabaseServiceUsers();
   final TextEditingController nameController =
       TextEditingController(); // Controlador para o nome
@@ -53,6 +54,7 @@ class SignupScreen extends StatelessWidget {
               decoration: InputDecoration(labelText: 'Email'),
             ),
             TextField(
+              controller: passwordController, // Usando o controlador
               decoration: InputDecoration(
                 labelText: 'Senha',
                 suffixIcon: Icon(Icons.visibility),
@@ -97,18 +99,8 @@ class SignupScreen extends StatelessWidget {
                   );
                 }
 
-                //Inserir no banco do firebase
-                final user = Usuario(
-                    nomeUsuario: nome_usuario,
-                    email: email,
-                    pontosTotais: 0,
-                    firebaseUuid: '');
-                print(user);
-                databaseServiceUsers.addUsuario(user);
+                _createFirebaseAccount(context);
 
-                
-
-                // Navegar para a HomePage, passando o nome
                 Navigator.pushNamed(context, '/home', arguments: nome_usuario);
               },
               style: ElevatedButton.styleFrom(
@@ -167,5 +159,69 @@ class SignupScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _createFirebaseAccount(context) async {
+    try {
+      // Criação de usuário no Firebase
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+      User? user = userCredential.user;
+      if (user != null) {
+        // Usuário criado com sucesso
+        String userUid = user.uid;
+
+        print("Novo usuário criado: ${userUid}");
+        // Atualizar o nome do usuário
+        await user.updateDisplayName(nameController.text);
+        await user.reload();
+        user = FirebaseAuth.instance.currentUser;
+        print("Nome do usuário atualizado: ${user?.displayName}");
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString("userLogado", userUid);
+        prefs.setString('nomeUsuario', nameController.text);
+
+        print("UserLogado: ${prefs.getString("userLogado")}");
+
+        final usuarioProBancoFirestore = Usuario(
+            nomeUsuario: nameController.text,
+            email: emailController.text,
+            pontosTotais: 0,
+            firebaseUuid: userUid);
+        print(usuarioProBancoFirestore.toJson());
+        databaseServiceUsers.addUsuario(usuarioProBancoFirestore);
+      }
+    } on FirebaseAuthException catch (e) {
+      // Erro ao criar usuário
+      print("Erro ao criar usuário: ${e.message}");
+      AlertDialog(
+        title: Text("Erro"),
+        content: Text(e.message.toString()),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text("OK"),
+          ),
+        ],
+      );
+    } catch (e) {
+      AlertDialog(
+        title: Text("Erro"),
+        content: Text(e.toString()),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text("OK"),
+          ),
+        ],
+      );
+    }
   }
 }
