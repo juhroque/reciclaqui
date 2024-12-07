@@ -64,7 +64,7 @@ class SignupScreen extends StatelessWidget {
             SizedBox(height: 30),
             ElevatedButton(
               onPressed: () async {
-                final nome_usuario = nameController.text;
+                final nomeUsuario = nameController.text;
                 final email = emailController.text;
                 final dbHelper = DatabaseHelper();
 
@@ -91,17 +91,17 @@ class SignupScreen extends StatelessWidget {
                     },
                   );
                 } else {
-                  await dbHelper.insertUser(nome_usuario, email);
+                  await dbHelper.insertUser(nomeUsuario, email);
                   Navigator.pushNamed(
                     context,
                     '/home',
-                    arguments: UserArguments(email, nome_usuario),
+                    arguments: UserArguments(email, nomeUsuario),
                   );
                 }
 
                 _createFirebaseAccount(context);
 
-                Navigator.pushNamed(context, '/home', arguments: nome_usuario);
+                Navigator.pushNamed(context, '/home', arguments: nomeUsuario);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green[700],
@@ -174,7 +174,7 @@ class SignupScreen extends StatelessWidget {
         // Usuário criado com sucesso
         String userUid = user.uid;
 
-        print("Novo usuário criado: ${userUid}");
+        print("Novo usuário criado: $userUid");
         // Atualizar o nome do usuário
         await user.updateDisplayName(nameController.text);
         await user.reload();

@@ -15,7 +15,7 @@ class LoginScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  LoginScreen({Key? key}) : super(key: key);
+  LoginScreen({super.key});
 
   Future<void> _login(BuildContext context) async {
     String email = emailController.text.trim();

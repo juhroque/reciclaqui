@@ -290,7 +290,7 @@ class InfosPerfil extends StatelessWidget {
           onUpdateName(updatedName);
         }
       },
-      child: Container(
+      child: SizedBox(
         width: double.infinity,
         height: 256,
         child: Stack(
