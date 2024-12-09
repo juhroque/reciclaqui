@@ -6,6 +6,7 @@ import '../services/database_service_descartes.dart';
 import 'Reason_Screen.dart';
 import 'Search_Screen.dart';
 import 'Pontos_Screen.dart';
+import 'ImageClassifierPage.dart'; // Importação da página de classificação
 import 'package:reciclaqui/database/UserArguments.dart';
 
 class HomePage extends StatefulWidget {
@@ -34,14 +35,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _loadUserData() async {
-    // Carrega o nome do SharedPreferences
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     setState(() {
       userName = prefs.getString("nomeUsuario") ?? "Usuário";
     });
 
-    // Sincroniza os descartes do Firestore com o SQLite
     await syncDescartes();
   }
 
@@ -83,7 +82,7 @@ class _HomePageState extends State<HomePage> {
 
       int? id = await DatabaseHelper().getUserIdByEmail(email);
       setState(() {
-        userId = id; // Atualiza o estado com o ID do usuário
+        userId = id;
       });
     }
   }
@@ -94,18 +93,15 @@ class _HomePageState extends State<HomePage> {
         ModalRoute.of(context)!.settings.arguments as UserArguments;
     final String email = args.email;
     String name = userName;
-    //prefs
     int? pontos;
 
     Future<int> loadPontos() async {
       final prefs = await SharedPreferences.getInstance();
       pontos = prefs.getInt("pontosUsuario");
-      // Use a logging framework instead of print
       debugPrint('Pontos: $pontos');
       return pontos ?? 0;
     }
 
-    //load numero de descartes
     Future<int> loadNumeroDescartes() async {
       final prefs = await SharedPreferences.getInstance();
       int numeroDescartes = prefs.getInt("numeroDescartes") ?? 0;
@@ -128,19 +124,16 @@ class _HomePageState extends State<HomePage> {
                   } else if (pontosSnapshot.hasError) {
                     return Text('Erro ao carregar pontos');
                   } else {
-                    // Depois que os pontos foram carregados, carregue o número de descartes
                     return FutureBuilder<int>(
                       future: loadNumeroDescartes(),
                       builder: (context, descartesSnapshot) {
                         if (descartesSnapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return CircularProgressIndicator(); // Exibe indicador de carregamento
+                          return CircularProgressIndicator();
                         } else if (descartesSnapshot.hasError) {
                           return Text('Erro ao carregar número de descartes');
                         } else {
-                          return
-                              //depois carregar o nome
-                              InfosPerfil(
+                          return InfosPerfil(
                             name: name,
                             onUpdateName: (newName) {
                               setState(() {
@@ -161,18 +154,28 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildCard('Identificar Objeto', Icons.camera_alt, 130, '',
-                        context),
+                    _buildCard(
+                        'Identificar Objeto', Icons.camera_alt, 130, context,
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ImageClassifierPage()))),
                     _buildCard(
                       'Registrar Descarte',
                       Icons.delete,
                       130,
-                      '/registerDiscard',
                       context,
-                      userId: userId, // Passando o userId como argumento
+                      onTap: () => Navigator.pushNamed(
+                          context, '/registerDiscard',
+                          arguments: userId),
                     ),
-                    _buildCard('Estabelecimentos Parceiros', Icons.store, 130,
-                        '/partners', context),
+                    _buildCard(
+                      'Estabelecimentos Parceiros',
+                      Icons.store,
+                      130,
+                      context,
+                      onTap: () => Navigator.pushNamed(context, '/partners'),
+                    ),
                   ],
                 ),
               ),
@@ -210,22 +213,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildCard(
-      String text, IconData icon, double height, String rota, context,
-      {int? userId}) {
+      String text, IconData icon, double height, BuildContext context,
+      {required VoidCallback onTap}) {
     return GestureDetector(
-      onTap: () {
-        if (rota == '/registerDiscard') {
-          if (userId != null) {
-            Navigator.pushNamed(context, rota, arguments: userId);
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: Text('Erro: ID do usuário não encontrado.'),
-            ));
-          }
-        } else if (rota != '') {
-          Navigator.pushNamed(context, rota);
-        }
-      },
+      onTap: onTap,
       child: SizedBox(
         width: 300,
         height: height,
@@ -290,7 +281,7 @@ class InfosPerfil extends StatelessWidget {
           onUpdateName(updatedName);
         }
       },
-      child: Container(
+      child: SizedBox(
         width: double.infinity,
         height: 256,
         child: Stack(

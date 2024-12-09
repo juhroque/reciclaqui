@@ -2,8 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:reciclaqui/services/database_service_usuarios.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
 import 'package:reciclaqui/database/DataBaseHelper.dart';
 import 'package:reciclaqui/database/UserArguments.dart';
 
@@ -17,6 +15,89 @@ class SignupScreen extends StatelessWidget {
       TextEditingController(); // Controlador para o email
   final TextEditingController passwordController =
       TextEditingController(); // Controlador para a senha
+
+  SignupScreen({super.key});
+
+  Future<void> _handleSignup(BuildContext context) async {
+    try {
+      final nomeUsuario = nameController.text.trim();
+      final email = emailController.text.trim();
+      final password = passwordController.text;
+
+      // Validation
+      if (nomeUsuario.isEmpty || email.isEmpty || password.isEmpty) {
+        throw Exception("Por favor, preencha todos os campos");
+      }
+
+      final dbHelper = DatabaseHelper();
+      bool emailExists = await dbHelper.emailExists(email);
+
+      if (emailExists) {
+        throw Exception("Este email já está cadastrado. Tente outro.");
+      }
+
+      // Create Firebase account first
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      User? user = userCredential.user;
+      if (user == null) throw Exception("Erro ao criar conta");
+
+      // Update user display name
+      await user.updateDisplayName(nomeUsuario);
+      await user.reload();
+
+      // Store data in SharedPreferences
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString("userLogado", user.uid);
+      await prefs.setString('nomeUsuario', nomeUsuario);
+      await prefs.setString('email', email);
+      debugPrint("UserLogado: ${prefs.getString("userLogado")}");
+
+      // Create Firestore user
+      final usuarioProBancoFirestore = Usuario(
+        nomeUsuario: nomeUsuario,
+        email: email,
+        pontosTotais: 0,
+        firebaseUuid: user.uid,
+      );
+
+      databaseServiceUsers.addUsuario(usuarioProBancoFirestore);
+
+      // Create local SQLite user
+      await dbHelper.insertUser(nomeUsuario, email);
+
+      // Navigate to home page
+      if (context.mounted) {
+        Navigator.pushReplacementNamed(
+          context,
+          '/home',
+          arguments: UserArguments(email, nomeUsuario),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text("Erro"),
+              content: Text(e.toString()),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text("OK"),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,46 +144,7 @@ class SignupScreen extends StatelessWidget {
             ),
             SizedBox(height: 30),
             ElevatedButton(
-              onPressed: () async {
-                final nome_usuario = nameController.text;
-                final email = emailController.text;
-                final dbHelper = DatabaseHelper();
-
-                // Verifica se o email já existe
-                bool emailExists = await dbHelper.emailExists(email);
-
-                if (emailExists) {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text("Erro"),
-                        content:
-                            Text("Este email já está cadastrado. Tente outro."),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text("OK"),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                } else {
-                  await dbHelper.insertUser(nome_usuario, email);
-                  Navigator.pushNamed(
-                    context,
-                    '/home',
-                    arguments: UserArguments(email, nome_usuario),
-                  );
-                }
-
-                _createFirebaseAccount(context);
-
-                Navigator.pushNamed(context, '/home', arguments: nome_usuario);
-              },
+              onPressed: () => _handleSignup(context),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green[700],
                 padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
@@ -174,7 +216,7 @@ class SignupScreen extends StatelessWidget {
         // Usuário criado com sucesso
         String userUid = user.uid;
 
-        print("Novo usuário criado: ${userUid}");
+        print("Novo usuário criado: $userUid");
         // Atualizar o nome do usuário
         await user.updateDisplayName(nameController.text);
         await user.reload();
