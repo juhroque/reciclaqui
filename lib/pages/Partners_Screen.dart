@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class PartnersScreen extends StatelessWidget {
-  final int pontos = 1989;
+  final int pontos = 30;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class PartnersScreen extends StatelessWidget {
         'Estabelecimentos Parceiros',
         style: TextStyle(
           fontSize: 20,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w600,
           color: Colors.green[700],
         ),
       ),
@@ -48,15 +48,19 @@ class PartnersScreen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Seus pontos no ReciclAqui!:',
-          style: TextStyle(fontSize: 16),
+          'Seus pontos no ReciclAqui!',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: Color.fromARGB(255, 47, 121, 51),
+          ),
         ),
         Text(
           '$pontos Pontos',
           style: const TextStyle(
-            fontSize: 24,
+            fontSize: 32,
             fontWeight: FontWeight.bold,
-            color: Colors.green,
+            color:Color.fromARGB(255, 47, 121, 51),
           ),
         ),
         const SizedBox(height: 16),
@@ -71,6 +75,8 @@ class PartnersScreen extends StatelessWidget {
   Widget _buildEstabelecimentosList() {
     // Simulação de parceiros (poderia vir de uma API ou banco de dados)
     final List<Parceiro> parceiros = [
+      Parceiro(nome: 'Carrefour', imagem: 'assets/images/carrefour_logo.png'),
+      Parceiro(nome: 'Carrefour', imagem: 'assets/images/carrefour_logo.png'),
       Parceiro(nome: 'Carrefour', imagem: 'assets/images/carrefour_logo.png'),
       Parceiro(nome: 'Carrefour', imagem: 'assets/images/carrefour_logo.png'),
       Parceiro(nome: 'Carrefour', imagem: 'assets/images/carrefour_logo.png'),
@@ -89,9 +95,11 @@ class PartnersScreen extends StatelessWidget {
   Widget _buildParceiroCard(Parceiro parceiro) {
     return Card(
       color: const Color(0xFFFFFFFF),
-      //no shadow:
-      elevation: 0,
+      elevation: 3, // Adiciona uma leve sombra ao card
       margin: const EdgeInsets.only(bottom: 16),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12), // Cantos arredondados no card
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
@@ -106,9 +114,18 @@ class PartnersScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+                    parceiro.nome,
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.green[700],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                   const Text(
                     'No ReciclAqui suas contribuições valem pontos, conheça os estabelecimentos parceiros:',
-                    style: TextStyle(fontSize: 14),
+                    style: TextStyle(fontSize: 14, color: Colors.grey),
                   ),
                   const SizedBox(height: 12),
                   ElevatedButton(

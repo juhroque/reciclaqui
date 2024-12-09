@@ -50,8 +50,6 @@ class _HomePageState extends State<HomePage> {
     DatabaseHelper dbHelper = DatabaseHelper();
     String email = prefs.getString('email') ?? '';
     int? sqliteId = await dbHelper.getUserIdByEmail(email);
-    print('id: $sqliteId');
-    print('userUUID: $userUUID');
     prefs.setInt('sqliteId', sqliteId!);
     dbHelper.deleteAllDiscards(sqliteId);
 
@@ -98,20 +96,20 @@ class _HomePageState extends State<HomePage> {
     Future<int> loadPontos() async {
       final prefs = await SharedPreferences.getInstance();
       pontos = prefs.getInt("pontosUsuario");
-      debugPrint('Pontos: $pontos');
       return pontos ?? 0;
     }
 
     Future<int> loadNumeroDescartes() async {
       final prefs = await SharedPreferences.getInstance();
       int numeroDescartes = prefs.getInt("numeroDescartes") ?? 0;
-      debugPrint('Número de descartes: $numeroDescartes');
       return numeroDescartes;
     }
 
     return Scaffold(
+      backgroundColor: Colors.white, // Fundo branco
       body: Stack(
         children: [
+          // Fundo branco removido, pois a cor do Scaffold já é branca
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -221,10 +219,11 @@ class _HomePageState extends State<HomePage> {
         width: 300,
         height: height,
         child: Card(
-          elevation: 2,
+          elevation: 10,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(15),
           ),
+          color: Colors.white.withOpacity(0.9),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
@@ -233,7 +232,7 @@ class _HomePageState extends State<HomePage> {
                 Icon(
                   icon,
                   size: 50,
-                  color: Colors.grey[700],
+                  color: Colors.green[700],
                 ),
                 SizedBox(height: 10),
                 Text(
@@ -241,6 +240,7 @@ class _HomePageState extends State<HomePage> {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
+                    color: Colors.green[700],
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -276,7 +276,6 @@ class InfosPerfil extends StatelessWidget {
             builder: (context) => PontosScreen(),
           ),
         );
-        // Se houver um novo nome, atualize-o na HomePage
         if (updatedName != null) {
           onUpdateName(updatedName);
         }
@@ -309,7 +308,7 @@ class InfosPerfil extends StatelessWidget {
                 children: [
                   CircleAvatar(
                     radius: 50,
-                    backgroundImage: AssetImage('assets/images/Icon.png'),
+                    backgroundImage: AssetImage('assets/images/Icon.jpg'),
                   ),
                   SizedBox(height: 10),
                   Text(

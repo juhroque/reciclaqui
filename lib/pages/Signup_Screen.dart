@@ -114,76 +114,143 @@ class SignupScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Criar uma nova conta',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.green[700],
-              ),
-            ),
-            SizedBox(height: 30),
-            TextField(
-              controller: nameController, // Usando o controlador
-              decoration: InputDecoration(labelText: 'Nome'),
-            ),
-            TextField(
-              controller: emailController, //usando o controlador
-              decoration: InputDecoration(labelText: 'Email'),
-            ),
-            TextField(
-              controller: passwordController, // Usando o controlador
-              decoration: InputDecoration(
-                labelText: 'Senha',
-                suffixIcon: Icon(Icons.visibility),
-              ),
-              obscureText: true,
-            ),
-            SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () => _handleSignup(context),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green[700],
-                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+        child: SingleChildScrollView( // Permite o scroll caso o teclado apareça
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Criar uma nova conta',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green[700],
                 ),
               ),
-              child: Text('Criar Conta', style: TextStyle(fontSize: 18)),
-            ),
-            SizedBox(height: 20),
-            Text('ou continue com'),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildSocialButton('assets/images/search.png'),
-                SizedBox(width: 10),
-                _buildSocialButton('assets/images/apple.png'),
-                SizedBox(width: 10),
-                _buildSocialButton('assets/images/facebook.png'),
-              ],
-            ),
-            SizedBox(height: 20),
-            GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, '/login');
-              },
-              child: Text(
-                'Já tem uma conta? Sign in',
-                style: TextStyle(color: Colors.blue),
+              SizedBox(height: 10),
+              Text(
+                'Crie sua conta para começar!',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey,
+                ),
               ),
-            ),
-          ],
+              SizedBox(height: 20),
+
+              // Campo de Nome
+              TextField(
+                controller: nameController,
+                decoration: InputDecoration(
+                  labelText: 'Nome',
+                  labelStyle: TextStyle(color: Colors.grey),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.green[700]!),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              SizedBox(height: 15),
+
+              // Campo de Email
+              TextField(
+                controller: emailController,
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  labelStyle: TextStyle(color: Colors.grey),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.green[700]!),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              SizedBox(height: 15),
+
+              // Campo de Senha
+              TextField(
+                controller: passwordController,
+                decoration: InputDecoration(
+                  labelText: 'Senha',
+                  labelStyle: TextStyle(color: Colors.grey),
+                  suffixIcon: Icon(Icons.visibility, color: Colors.green[700]),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.green[700]!),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                obscureText: true,
+              ),
+              SizedBox(height: 20),
+
+              // Botão de Criar Conta
+              ElevatedButton(
+                onPressed: () => _handleSignup(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green[700],
+                  padding: EdgeInsets.symmetric(horizontal: 100, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  elevation: 5,
+                ),
+                child: Text(
+                  'Criar Conta',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+
+              // Texto de "ou continue com"
+              Text(
+                'ou continue com',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey,
+                ),
+              ),
+              SizedBox(height: 10),
+
+              // Botões sociais
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildSocialButton('assets/images/search.png'),
+                  SizedBox(width: 10),
+                  _buildSocialButton('assets/images/apple.png'),
+                  SizedBox(width: 10),
+                  _buildSocialButton('assets/images/facebook.png'),
+                ],
+              ),
+              SizedBox(height: 20),
+
+              // Texto para já ter uma conta
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, '/login');
+                },
+                child: Text(
+                  'Já tem uma conta? Entrar',
+                  style: TextStyle(color: Colors.green),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  // Função para criar os botões de redes sociais com ícones
   Widget _buildSocialButton(String imagePath) {
     return InkWell(
       onTap: () {},
@@ -192,8 +259,16 @@ class SignupScreen extends StatelessWidget {
         height: 50,
         padding: EdgeInsets.all(8),
         decoration: BoxDecoration(
+          color: Colors.white,
           border: Border.all(color: Colors.grey),
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 5,
+              spreadRadius: 2,
+            ),
+          ],
         ),
         child: Image.asset(
           imagePath,
@@ -201,69 +276,5 @@ class SignupScreen extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Future<void> _createFirebaseAccount(context) async {
-    try {
-      // Criação de usuário no Firebase
-      UserCredential userCredential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: emailController.text,
-        password: passwordController.text,
-      );
-      User? user = userCredential.user;
-      if (user != null) {
-        // Usuário criado com sucesso
-        String userUid = user.uid;
-
-        print("Novo usuário criado: $userUid");
-        // Atualizar o nome do usuário
-        await user.updateDisplayName(nameController.text);
-        await user.reload();
-        user = FirebaseAuth.instance.currentUser;
-        print("Nome do usuário atualizado: ${user?.displayName}");
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setString("userLogado", userUid);
-        prefs.setString('nomeUsuario', nameController.text);
-
-        print("UserLogado: ${prefs.getString("userLogado")}");
-
-        final usuarioProBancoFirestore = Usuario(
-            nomeUsuario: nameController.text,
-            email: emailController.text,
-            pontosTotais: 0,
-            firebaseUuid: userUid);
-        print(usuarioProBancoFirestore.toJson());
-        databaseServiceUsers.addUsuario(usuarioProBancoFirestore);
-      }
-    } on FirebaseAuthException catch (e) {
-      // Erro ao criar usuário
-      print("Erro ao criar usuário: ${e.message}");
-      AlertDialog(
-        title: Text("Erro"),
-        content: Text(e.message.toString()),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text("OK"),
-          ),
-        ],
-      );
-    } catch (e) {
-      AlertDialog(
-        title: Text("Erro"),
-        content: Text(e.toString()),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text("OK"),
-          ),
-        ],
-      );
-    }
   }
 }

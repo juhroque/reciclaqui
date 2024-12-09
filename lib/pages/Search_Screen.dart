@@ -158,14 +158,17 @@ class _SearchScreenState extends State<SearchScreen> {
         iconTheme: const IconThemeData(color: Colors.green),
       ),
       body: Column(
+        
         children: [
+          
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
+              
               controller: _searchController,
               decoration: InputDecoration(
                 hintText: 'Buscar no ReciclAqui!',
-                prefixIcon: const Icon(Icons.search, color: Colors.green),
+                prefixIcon: const Icon(Icons.search, color: Colors.grey),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
@@ -203,7 +206,7 @@ class _SearchScreenState extends State<SearchScreen> {
               Text(
                 entry.key,
                 style: const TextStyle(
-                  color: Colors.green,
+                  color: Colors.grey,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -267,7 +270,7 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget _buildCard(String label, IconData icon, String imageUrl,
+   Widget _buildCard(String label, IconData icon, String imageUrl,
       String description, BuildContext context) {
     return GestureDetector(
       onTap: () {
@@ -283,24 +286,32 @@ class _SearchScreenState extends State<SearchScreen> {
         );
       },
       child: Container(
-        width: 120,
-        height: 120,
-        margin: const EdgeInsets.only(right: 10),
+        width: 140,
+        height: 140,
+        margin: const EdgeInsets.only(right: 16, bottom: 20),
         decoration: BoxDecoration(
-          color: Colors.grey[300],
-          borderRadius: BorderRadius.circular(8),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 4,
+              offset: const Offset(0, 3),
+            ),
+          ],
+          borderRadius: BorderRadius.circular(12.0),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 32, color: Colors.grey[700]),
-            const SizedBox(height: 5),
+            Icon(icon, size: 36, color: Colors.green),
+            const SizedBox(height: 8),
             Text(
               label,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.grey[700],
+              style: const TextStyle(
+                color: Colors.grey,
                 fontSize: 14,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],

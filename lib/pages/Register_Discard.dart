@@ -32,10 +32,11 @@ class _RegisterDiscardPageState extends State<RegisterDiscardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: Colors.white,
       appBar: _buildAppBar(context),
       body: Center(
         child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
           child: _buildFormulario(context),
         ),
       ),
@@ -44,12 +45,12 @@ class _RegisterDiscardPageState extends State<RegisterDiscardPage> {
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
-      backgroundColor: const Color(0xFFFFFFFF),
+      backgroundColor: Colors.white,
       title: Text(
         'Registrar Descarte',
         style: TextStyle(
           fontSize: 20,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w600,
           color: Colors.green[700],
         ),
       ),
@@ -64,93 +65,96 @@ class _RegisterDiscardPageState extends State<RegisterDiscardPage> {
   }
 
   Widget _buildFormulario(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 16),
-          TextField(
-            controller: objetoController,
-            decoration: inputDecoration('Objeto'),
-          ),
-          const SizedBox(height: 16),
-          DropdownButtonFormField<String>(
-            items: [
-              DropdownMenuItem(
-                  value: 'Restos de Alimentos',
-                  child: Text('Restos de Alimentos')),
-              DropdownMenuItem(
-                  value: 'Cascas de Frutas', child: Text('Cascas de Frutas')),
-              DropdownMenuItem(value: 'Vegetais', child: Text('Vegetais')),
-              DropdownMenuItem(
-                  value: 'Outros Biodegradáveis',
-                  child: Text('Outros Biodegradáveis')),
-              DropdownMenuItem(
-                  value: 'Papéis/Papelão', child: Text('Papéis/Papelão')),
-              DropdownMenuItem(value: 'Plásticos', child: Text('Plásticos')),
-              DropdownMenuItem(value: 'Vidros', child: Text('Vidros')),
-              DropdownMenuItem(value: 'Metais', child: Text('Metais')),
-              DropdownMenuItem(value: 'Pilhas', child: Text('Pilhas')),
-              DropdownMenuItem(value: 'Baterias', child: Text('Baterias')),
-              DropdownMenuItem(value: 'Lâmpadas', child: Text('Lâmpadas')),
-              DropdownMenuItem(
-                  value: 'Medicamentos', child: Text('Medicamentos')),
-              DropdownMenuItem(value: 'Celulares', child: Text('Celulares')),
-              DropdownMenuItem(
-                  value: 'Computadores', child: Text('Computadores')),
-              DropdownMenuItem(
-                  value: 'Eletrodomésticos', child: Text('Eletrodomésticos')),
-              DropdownMenuItem(
-                  value: 'Papéis Higiênicos', child: Text('Papéis Higiênicos')),
-              DropdownMenuItem(value: 'Fraldas', child: Text('Fraldas')),
-              DropdownMenuItem(
-                  value: 'Esponjas Usadas', child: Text('Esponjas Usadas')),
-              DropdownMenuItem(value: 'Outro', child: Text('Outro')),
-            ],
-            onChanged: (value) {
-              setState(() {
-                selectedCategoria = value;
-              });
-            },
-            decoration: inputDecoration('Categoria'),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: quantidadeController,
-            decoration: inputDecoration('Quantidade'),
-            keyboardType: TextInputType.number,
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: localDeDescarteController,
-            decoration: inputDecoration('Local de Descarte'),
-          ),
-          const SizedBox(height: 30),
-          ElevatedButton(
-            onPressed: _registerDiscard,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green[700],
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 100, vertical: 15),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            child: const Text('Registrar Descarte',
-                style: TextStyle(fontSize: 18, color: Colors.white)),
-          ),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 16),
+        _buildInputField('Objeto', objetoController),
+        const SizedBox(height: 16),
+        _buildDropdownField(),
+        const SizedBox(height: 16),
+        _buildInputField('Quantidade', quantidadeController, keyboardType: TextInputType.number),
+        const SizedBox(height: 16),
+        _buildInputField('Local de Descarte', localDeDescarteController),
+        const SizedBox(height: 30),
+        Center(
+          child: _buildSubmitButton(),
+        ),
+      ],
     );
   }
 
-  InputDecoration inputDecoration(String text) {
-    return InputDecoration(
-      labelText: text,
-      labelStyle: const TextStyle(color: Color(0xFF837E7E)),
-      floatingLabelBehavior: FloatingLabelBehavior.never,
-      contentPadding: const EdgeInsets.only(bottom: 8),
+  Widget _buildInputField(String label, TextEditingController controller, {TextInputType? keyboardType}) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: TextStyle(color: Colors.grey[600]),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.green[700]!),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.green[700]!),
+        ),
+      ),
+      keyboardType: keyboardType,
+    );
+  }
+
+  Widget _buildDropdownField() {
+    return DropdownButtonFormField<String>(
+      value: selectedCategoria,
+      items: [
+        'Restos de Alimentos', 'Cascas de Frutas', 'Vegetais', 'Outros Biodegradáveis',
+        'Papéis/Papelão', 'Plásticos', 'Vidros', 'Metais', 'Pilhas', 'Baterias', 'Lâmpadas',
+        'Medicamentos', 'Celulares', 'Computadores', 'Eletrodomésticos', 'Papéis Higiênicos',
+        'Fraldas', 'Esponjas Usadas', 'Outro',
+      ]
+          .map((e) => DropdownMenuItem(value: e, child: Text(e, style: TextStyle(fontSize: 16, color: Colors.black))))
+          .toList(),
+      onChanged: (value) {
+        setState(() {
+          selectedCategoria = value;
+        });
+      },
+      decoration: InputDecoration(
+        labelText: 'Categoria',
+        labelStyle: TextStyle(color: Colors.grey[600], fontSize: 16), // Ajuste do tamanho e cor do texto
+        contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Colors.green[700]!, width: 1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Colors.green[700]!, width: 1),
+        ),
+      ),
+      dropdownColor: Colors.white, // Fundo branco para o dropdown
+      iconEnabledColor: Colors.grey[600], // Cor do ícone do dropdown
+    );
+}
+
+
+
+  Widget _buildSubmitButton() {
+    return ElevatedButton(
+      onPressed: _registerDiscard,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.green[700],
+        padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 15),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+      ),
+      child: const Text(
+        'Registrar Descarte',
+        style: TextStyle(fontSize: 18, color: Colors.white),
+      ),
     );
   }
 
@@ -165,7 +169,6 @@ class _RegisterDiscardPageState extends State<RegisterDiscardPage> {
         quantidade > 0 &&
         localDeDescarte.isNotEmpty) {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
-
       final String userUUID = prefs.getString("userLogado") ?? "";
 
       await DatabaseHelper().insertDiscard(
